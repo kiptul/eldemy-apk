@@ -1,3 +1,30 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <!-- Exit Confirmation Popup -->
+  <div class="exit-popup-backdrop" *ngIf="showExitPopup" (click)="cancelExit()">
+    <div class="exit-popup-card" (click)="$event.stopPropagation()">
+      <!-- Animated Icon -->
+      <div class="exit-popup-icon-wrapper">
+        <div class="exit-popup-icon-ring"></div>
+        <div class="exit-popup-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Title & Message -->
+      <h3 class="exit-popup-title">Keluar Aplikasi?</h3>
+      <p class="exit-popup-message">Apakah kamu yakin ingin keluar dari <strong>Eldemy</strong>?</p>
+
+      <!-- Action Buttons -->
+      <div class="exit-popup-actions">
+        <button class="exit-btn-cancel" (click)="cancelExit()">Tidak, Tetap di Sini</button>
+        <button class="exit-btn-confirm" (click)="confirmExit()">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
 </ion-app>
