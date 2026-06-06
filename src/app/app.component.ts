@@ -35,12 +35,23 @@ export class AppComponent {
       this.zone.run(() => {
         const url = this.router.url;
 
-        // Root/exit pages: exit the app
-        const exitPages = [
+        // Main tab pages: do nothing (stay on page)
+        const stayPages = [
           '/tabs/home',
           '/tabs/courses',
           '/tabs/history',
-          '/tabs/profile',
+          '/tabs/profile'
+        ];
+
+        const shouldStay = stayPages.some(page => url === page || url === page + '/');
+
+        if (shouldStay) {
+          // Do nothing — user stays on the current tab page
+          return;
+        }
+
+        // Exit pages: exit the app entirely
+        const exitPages = [
           '/login',
           '/register',
           '/welcome',
@@ -50,11 +61,9 @@ export class AppComponent {
 
         const shouldExit = exitPages.some(page => {
           if (page === '/privacy-policy') {
-            // Only exit if it's the onboarding privacy policy (no query params check needed here,
-            // the standalone route at root level is only used for onboarding)
             return url === '/privacy-policy' || url.startsWith('/privacy-policy?');
           }
-          return url === page || url === page + '/' ;
+          return url === page || url === page + '/';
         });
 
         if (shouldExit) {
