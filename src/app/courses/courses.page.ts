@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
@@ -19,7 +19,10 @@ import { HeaderComponent } from '../shared/components/header/header.component';
   templateUrl: './courses.page.html',
   styleUrls: ['./courses.page.scss']
 })
-export class CoursesPage implements OnInit {
+export class CoursesPage {
+  private apiService = inject(ApiService);
+  private router = inject(Router);
+
   myCourses: any[] = [];
   isLoading: boolean = true;
   user: any = null;
@@ -71,10 +74,7 @@ export class CoursesPage implements OnInit {
     }
   ];
 
-  constructor(
-    private apiService: ApiService,
-    private router: Router
-  ) {
+  constructor() {
     addIcons({
       bookOutline, caretForwardOutline, timeOutline, listOutline,
       searchOutline, checkmarkCircle, trophyOutline, ribbonOutline,
@@ -82,8 +82,6 @@ export class CoursesPage implements OnInit {
       documentTextOutline, helpCircleOutline
     });
   }
-
-  ngOnInit() {}
 
   ionViewWillEnter() {
     this.loadMyCourses();

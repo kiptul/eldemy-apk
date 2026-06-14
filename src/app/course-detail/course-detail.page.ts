@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ViewWillEnter } from '@ionic/angular';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router'; 
@@ -22,6 +22,13 @@ import {
   imports: [IonicModule, CommonModule, HeaderComponent, RouterModule],
 })
 export class CourseDetailPage implements OnInit, ViewWillEnter {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private apiService = inject(ApiService);
+  private navCtrl = inject(NavController);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
+
   course: any = null; 
   hasPurchased: boolean = false; 
   user: any = null;
@@ -37,14 +44,7 @@ export class CourseDetailPage implements OnInit, ViewWillEnter {
   toastVisible = false;
   private toastTimer: any = null;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private apiService: ApiService,
-    private navCtrl: NavController,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {
+  constructor() {
     addIcons({ 
       star, peopleOutline, lockClosedOutline, playCircle, 
       shieldCheckmark, arrowForwardOutline, playCircleOutline, 

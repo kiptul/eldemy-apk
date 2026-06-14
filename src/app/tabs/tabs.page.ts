@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
 import { Router, NavigationEnd } from '@angular/router';
@@ -19,9 +19,11 @@ import {
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, CommonModule]
 })
 export class TabsPage implements OnInit {
+  private router = inject(Router);
+
   showTabBar = true;
 
-  constructor(private router: Router) {
+  constructor() {
     addIcons({
       homeOutline, home,
       bookOutline, book,

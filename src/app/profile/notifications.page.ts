@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -73,8 +73,6 @@ import {
     </ion-content>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-
     :host {
       --primary: #F06292;
       --secondary: #4DB6AC;
@@ -302,15 +300,15 @@ import {
   `]
 })
 export class NotificationsPage implements OnInit {
+  private router = inject(Router);
+  private apiService = inject(ApiService);
+  private toastCtrl = inject(ToastController);
+
   notifications: any[] = [];
   unreadCount = 0;
   isLoading = true;
 
-  constructor(
-    private router: Router,
-    private apiService: ApiService,
-    private toastCtrl: ToastController
-  ) {
+  constructor() {
     addIcons({
       chevronBackOutline, notificationsOutline, megaphoneOutline,
       cartOutline, ribbonOutline, bookOutline, checkmarkDoneOutline,

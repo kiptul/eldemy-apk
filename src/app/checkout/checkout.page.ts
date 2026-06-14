@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +16,12 @@ import { Browser } from '@capacitor/browser';
   imports: [IonicModule, CommonModule, HeaderComponent]
 })
 export class CheckoutPage implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private apiService = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
+
   courseId: number = 0;
   course: any = null;
   isLoading: boolean = true;
@@ -32,13 +38,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
   toastVisible: boolean = false;
   private toastTimer: any = null;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private apiService: ApiService,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {
+  constructor() {
     addIcons({ shieldCheckmark, arrowForwardOutline, checkmarkCircleOutline });
   }
 

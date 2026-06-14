@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, OnDestroy, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, NavController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
@@ -23,6 +23,14 @@ import {
   imports: [IonicModule, CommonModule]
 })
 export class MaterialDetailPage implements OnInit, AfterViewInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private apiService = inject(ApiService);
+  private navCtrl = inject(NavController);
+  private sanitizer = inject(DomSanitizer);
+  private el = inject(ElementRef);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
+
   courseId: number = 0;
   materialId: number = 0;
   material: any = null;
@@ -81,15 +89,7 @@ export class MaterialDetailPage implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly LETTER_MAP = ['A', 'B', 'C', 'D'];
 
-  constructor(
-    private route: ActivatedRoute,
-    private apiService: ApiService,
-    private navCtrl: NavController,
-    private sanitizer: DomSanitizer,
-    private el: ElementRef,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {
+  constructor() {
     addIcons({
       chevronBack, checkmarkCircle, timeOutline, videocamOutline,
       documentTextOutline, playCircleOutline, checkmarkDoneOutline,

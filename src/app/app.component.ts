@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
@@ -14,14 +14,14 @@ import { NavController, Platform } from '@ionic/angular';
   imports: [CommonModule, IonApp, IonRouterOutlet],
 })
 export class AppComponent {
+  private router = inject(Router);
+  private navCtrl = inject(NavController);
+  private platform = inject(Platform);
+  private zone = inject(NgZone);
+
   showExitPopup = false;
 
-  constructor(
-    private router: Router,
-    private navCtrl: NavController,
-    private platform: Platform,
-    private zone: NgZone
-  ) {
+  constructor() {
     this.initializeApp();
   }
 

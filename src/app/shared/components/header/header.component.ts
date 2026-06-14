@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -14,6 +14,10 @@ import { chevronBackOutline, notificationsOutline } from 'ionicons/icons';
   imports: [IonicModule, CommonModule]
 })
 export class HeaderComponent implements OnInit {
+  private apiService = inject(ApiService);
+  private location = inject(Location);
+  private router = inject(Router);
+
   @Input() showBackButton: boolean = false;
   @Input() title: string = '';
   @Input() transparent: boolean = false;
@@ -22,11 +26,7 @@ export class HeaderComponent implements OnInit {
   avatarFailed = false;
   avatarTimestamp = Date.now();
 
-  constructor(
-    private apiService: ApiService,
-    private location: Location,
-    private router: Router
-  ) {
+  constructor() {
     addIcons({ chevronBackOutline, notificationsOutline });
   }
 

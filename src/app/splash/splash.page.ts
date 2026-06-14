@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -11,10 +11,9 @@ import { CommonModule } from '@angular/common';
   imports: [IonicModule, CommonModule],
 })
 export class SplashPage implements OnInit {
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
 
   ngOnInit() {
     this.navigateToNextScreen();

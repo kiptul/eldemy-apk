@@ -9,10 +9,10 @@ const config: CapacitorConfig = {
       scopes: ['profile', 'email'],
       // Web Client ID - digunakan saat ionic serve di browser
       clientId:
-        '928122069790-jh6uvrfqqn6hq6mlj40isk3j5os0e993.apps.googleusercontent.com',
+        '25668087734-k83acc3es2epk29r8vqb94lp42j3i4it.apps.googleusercontent.com',
       // Server Client ID - digunakan native Android untuk request token ke backend
       serverClientId:
-        '928122069790-jh6uvrfqqn6hq6mlj40isk3j5os0e993.apps.googleusercontent.com',
+        '25668087734-k83acc3es2epk29r8vqb94lp42j3i4it.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
     },
   },

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -14,7 +14,12 @@ import { Browser } from '@capacitor/browser';
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
 })
-export class HistoryPage implements OnInit {
+export class HistoryPage {
+  private apiService = inject(ApiService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
+
   activeTab: 'selesai' | 'progress' = 'selesai';
   isLoading = true;
 
@@ -42,15 +47,6 @@ export class HistoryPage implements OnInit {
   toastType = '';
   toastVisible = false;
   private toastTimer: any = null;
-
-  constructor(
-    private apiService: ApiService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {}
-
-  ngOnInit() {}
 
   ionViewWillEnter() {
     this.loadHistory();

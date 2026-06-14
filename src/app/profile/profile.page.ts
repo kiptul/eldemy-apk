@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -100,8 +100,6 @@ import {
     </ion-content>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-
     :host {
       --primary: #F06292;
       --secondary: #4DB6AC;
@@ -378,6 +376,11 @@ import {
   `]
 })
 export class ProfilePage implements OnInit {
+  private apiService = inject(ApiService);
+  private router = inject(Router);
+  private googleAuthService = inject(GoogleAuthService);
+  private toastCtrl = inject(ToastController);
+
   user: any = null;
   avatarFailed = false;
   avatarTimestamp = Date.now(); // Untuk cache-busting yang agresif
@@ -389,12 +392,7 @@ export class ProfilePage implements OnInit {
   selectedFile: File | null = null;
   avatarPreview: string | null = null;
 
-  constructor(
-    private apiService: ApiService, 
-    private router: Router,
-    private googleAuthService: GoogleAuthService,
-    private toastCtrl: ToastController
-  ) {
+  constructor() {
     addIcons({
       personOutline, notificationsOutline, shieldCheckmarkOutline,
       helpCircleOutline, logOutOutline, chevronForwardOutline,

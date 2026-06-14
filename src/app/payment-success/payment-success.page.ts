@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,17 +14,17 @@ import { checkmarkOutline, arrowForwardOutline, documentTextOutline, helpCircleO
   imports: [IonicModule, CommonModule]
 })
 export class PaymentSuccessPage implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private apiService = inject(ApiService);
+
   courseId: number = 0;
   course: any = null;
   user: any = null;
   currentDate: Date = new Date();
   orderId: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private apiService: ApiService
-  ) {
+  constructor() {
     this.orderId = 'EC-' + Math.floor(10000000 + Math.random() * 90000000);
     addIcons({ checkmarkOutline, arrowForwardOutline, documentTextOutline, helpCircleOutline });
   }

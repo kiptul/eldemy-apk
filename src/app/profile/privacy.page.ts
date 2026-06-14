@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -92,8 +92,6 @@ import {
     </ion-content>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-
     :host {
       --primary: #F06292;
       --secondary: #4DB6AC;
@@ -285,7 +283,12 @@ import {
     }
   `]
 })
-export class PrivacyPage implements OnInit {
+export class PrivacyPage {
+  private router = inject(Router);
+  private toastCtrl = inject(ToastController);
+  private alertCtrl = inject(AlertController);
+  private apiService = inject(ApiService);
+
   currentPassword = '';
   newPassword = '';
   confirmPassword = '';
@@ -294,19 +297,12 @@ export class PrivacyPage implements OnInit {
   showConfirmPassword = false;
   isChangingPassword = false;
 
-  constructor(
-    private router: Router,
-    private toastCtrl: ToastController,
-    private alertCtrl: AlertController,
-    private apiService: ApiService
-  ) {
+  constructor() {
     addIcons({
       chevronBackOutline, lockClosedOutline, eyeOutline, eyeOffOutline,
       keyOutline, fingerPrintOutline, trashOutline
     });
   }
-
-  ngOnInit() {}
 
   async showToast(msg: string, color: string = 'success') {
     const toast = await this.toastCtrl.create({

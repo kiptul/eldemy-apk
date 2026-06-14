@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -13,21 +13,17 @@ import { GoogleAuthService } from '../services/google-auth.service';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterModule],
 })
-export class RegisterPage implements OnInit {
+export class RegisterPage {
+  private apiService = inject(ApiService);
+  private googleAuthService = inject(GoogleAuthService);
+  private router = inject(Router);
+
   username = '';
   email = '';
   password = '';
   repeatPassword = '';
   showPassword = false;
   showRepeatPassword = false;
-
-  constructor(
-    private apiService: ApiService,
-    private googleAuthService: GoogleAuthService,
-    private router: Router,
-  ) {}
-
-  ngOnInit() {}
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -72,9 +68,7 @@ export class RegisterPage implements OnInit {
     try {
       const tokens = await this.googleAuthService.signIn();
 
-      if (!tokens.accessToken && !tokens.idToken) {
-        return;
-      }
+      if (!tokens.accessToken && !tokens.idToken) { alert('DEBUG: token Google kosong.'); return; }
 
       this.apiService.googleLogin(tokens).subscribe({
         next: (res: any) => {
@@ -84,11 +78,11 @@ export class RegisterPage implements OnInit {
           }
         },
         error: (err) => {
-          console.error('Gagal daftar Google:', err);
+          alert('DEBUG backend: ' + (err?.error?.message || err?.message || JSON.stringify(err)));
         },
       });
     } catch (error: any) {
-      console.error('Google Auth Error:', error);
+      alert('DEBUG native: ' + [error?.message, error?.code, String(error)].filter(Boolean).join(' | '));
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { IonicModule } from '@ionic/angular';
 
@@ -10,7 +10,8 @@ import { IonicModule } from '@ionic/angular';
   imports: [IonicModule],
 })
 export class WelcomePage {
-  constructor(private navCtrl: NavController) {}
+  private navCtrl = inject(NavController);
+
 
   goToLogin() {
     this.navCtrl.navigateForward('/login');

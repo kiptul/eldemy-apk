@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -15,7 +15,11 @@ import { personOutline, sparklesOutline } from 'ionicons/icons';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class LoginPage implements OnInit {
+export class LoginPage {
+  private apiService = inject(ApiService);
+  private googleAuthService = inject(GoogleAuthService);
+  private router = inject(Router);
+
   email = '';
   password = '';
   showPassword = false;
@@ -24,15 +28,9 @@ export class LoginPage implements OnInit {
   nicknameInput = '';
   isSavingNickname = false;
 
-  constructor(
-    private apiService: ApiService,
-    private googleAuthService: GoogleAuthService,
-    private router: Router,
-  ) {
+  constructor() {
     addIcons({ personOutline, sparklesOutline });
   }
-
-  ngOnInit() {}
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -61,9 +59,7 @@ export class LoginPage implements OnInit {
     try {
       const tokens = await this.googleAuthService.signIn();
 
-      if (!tokens.accessToken && !tokens.idToken) {
-        return;
-      }
+      if (!tokens.accessToken && !tokens.idToken) { alert('DEBUG: token Google kosong.'); return; }
 
       this.apiService.googleLogin(tokens).subscribe({
         next: (res: any) => {
@@ -73,11 +69,11 @@ export class LoginPage implements OnInit {
           }
         },
         error: (err) => {
-          console.error('Gagal login Google:', err);
+          alert('DEBUG backend: ' + (err?.error?.message || err?.message || JSON.stringify(err)));
         },
       });
     } catch (error: any) {
-      console.error('Google Auth Error:', error);
+      alert('DEBUG native: ' + [error?.message, error?.code, String(error)].filter(Boolean).join(' | '));
     }
   }
 
@@ -88,7 +84,6 @@ export class LoginPage implements OnInit {
   goToRegister() {
     this.router.navigate(['/register']);
   }
-
 
   private checkNickname() {
     this.apiService.getUserProfile().subscribe({

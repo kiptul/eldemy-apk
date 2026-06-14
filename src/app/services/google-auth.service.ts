@@ -5,7 +5,7 @@ import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 declare const google: any;
 
 const WEB_CLIENT_ID =
-  '928122069790-jh6uvrfqqn6hq6mlj40isk3j5os0e993.apps.googleusercontent.com';
+  '25668087734-k83acc3es2epk29r8vqb94lp42j3i4it.apps.googleusercontent.com';
 
 @Injectable({
   providedIn: 'root',

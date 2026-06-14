@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -298,8 +298,6 @@ import {
     </ion-content>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
     ion-content.policy-content {
       --background: transparent;
     }
@@ -809,13 +807,13 @@ import {
   `]
 })
 export class PrivacyPolicyPage implements OnInit {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   isOnboarding = false;
   isAgreed = false;
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
+  constructor() {
     addIcons({
       chevronBackOutline, shieldCheckmarkOutline, personOutline,
       lockClosedOutline, cardOutline, analyticsOutline,

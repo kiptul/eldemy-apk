@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -95,8 +95,6 @@ import {
     </ion-content>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-
     :host {
       --primary: #F06292;
       --secondary: #4DB6AC;
@@ -298,9 +296,11 @@ import {
   `]
 })
 export class HelpPage implements OnInit {
+  private router = inject(Router);
+
   faqs: any[] = [];
 
-  constructor(private router: Router) {
+  constructor() {
     addIcons({
       chevronBackOutline, chatbubblesOutline, mailOutline,
       logoWhatsapp, documentTextOutline, informationCircleOutline,

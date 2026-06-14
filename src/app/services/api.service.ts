@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -8,11 +8,11 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class ApiService {
+  private http = inject(HttpClient);
+
   private apiUrl = environment.apiUrl;
   private userSubject = new BehaviorSubject<any>(null);
   public user$ = this.userSubject.asObservable();
-
-  constructor(private http: HttpClient) {}
 
   private getHeaders(): { headers: HttpHeaders } {
     const token = localStorage.getItem('token') || '';

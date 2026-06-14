@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +22,11 @@ import { HeaderComponent } from '../shared/components/header/header.component';
   imports: [IonicModule, CommonModule, FormsModule, HeaderComponent],
 })
 export class HomePage implements OnInit {
+  private apiService = inject(ApiService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private zone = inject(NgZone);
+
   courses: any[] = [];
   skillLevels: string[] = ['Semua', 'SD', 'SMP', 'SMA/SMK', 'UMUM'];
   activeSkillLevel: string = 'Semua';
@@ -38,12 +43,7 @@ export class HomePage implements OnInit {
   appliedSearchQuery: string = '';
   searchMode: string = 'all';
 
-  constructor(
-    private apiService: ApiService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    private zone: NgZone
-  ) {
+  constructor() {
     addIcons({
       searchOutline,
       optionsOutline,
