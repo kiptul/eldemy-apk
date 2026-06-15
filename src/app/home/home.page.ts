@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
+import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
@@ -42,6 +43,7 @@ export class HomePage implements OnInit {
   searchQuery: string = '';
   appliedSearchQuery: string = '';
   searchMode: string = 'all';
+  enablePayment = environment.enablePayment;
 
   constructor() {
     addIcons({

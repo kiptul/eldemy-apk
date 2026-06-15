@@ -203,13 +203,13 @@
 
 <ion-footer class="custom-sticky-footer ion-no-border" *ngIf="course && !hasPurchased" mode="md">
   <div class="footer-wrap">
-    <div class="price-col">
+    <div class="price-col" *ngIf="enablePayment">
       <span class="label"><ion-icon name="shield-checkmark" color="success" style="vertical-align: text-bottom;"></ion-icon> PEMBAYARAN AMAN</span>
       <span class="price">Rp {{ course.base_price | number }}</span>
     </div>
     <div class="action-col">
       <button class="buy-btn pulse-glow" (click)="doPurchase()">
-        Beli Sekarang
+        {{ enablePayment ? 'Beli Sekarang' : 'Mulai Belajar Gratis' }}
         <ion-icon name="arrow-forward-outline"></ion-icon>
       </button>
     </div>

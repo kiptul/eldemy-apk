@@ -48,7 +48,7 @@
       <p>{{ bestSellerCourse.description }}</p>
       <div class="card-footer">
         <div class="rating"><ion-icon name="people"></ion-icon> {{ bestSellerCourse.purchases_count || 0 }} Siswa</div>
-        <div class="price">Rp {{ bestSellerCourse.base_price | number }}</div>
+        <div class="price" *ngIf="enablePayment">Rp {{ bestSellerCourse.base_price | number }}</div>
       </div>
     </div>
 
@@ -103,7 +103,7 @@
               <span class="ins-title">INSTRUKTUR</span>
             </div>
           </div>
-          <div class="price-info">
+          <div class="price-info" *ngIf="enablePayment">
             <span class="price">Rp {{ course.base_price | number }}</span>
           </div>
         </div>
@@ -138,7 +138,7 @@
       </div>
     </div>
 
-    <div class="filter-section" style="margin-top: 24px;">
+    <div class="filter-section" style="margin-top: 24px;" *ngIf="enablePayment">
       <h3 style="margin: 0 0 12px; font-size: 0.95rem; font-weight: 600; color: #333;">Kisaran Harga</h3>
       <div class="price-radio-list">
         <label class="radio-option" *ngFor="let opt of [

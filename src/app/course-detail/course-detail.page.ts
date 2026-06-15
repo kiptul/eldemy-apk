@@ -4,6 +4,7 @@ import { IonicModule, ViewWillEnter } from '@ionic/angular';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router'; 
 import { NavController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
+import { environment } from '../../environments/environment';
 import { HeaderComponent } from '../shared/components/header/header.component';
 import { addIcons } from 'ionicons';
 import { 
@@ -33,6 +34,7 @@ export class CourseDetailPage implements OnInit, ViewWillEnter {
   hasPurchased: boolean = false; 
   user: any = null;
   courseId: number = 0;
+  enablePayment = environment.enablePayment;
   totalDuration: string = '';
 
   totalProgress: number = 0;
@@ -134,7 +136,19 @@ export class CourseDetailPage implements OnInit, ViewWillEnter {
   }
 
   doPurchase() {
-    this.router.navigate(['/checkout', this.courseId]);
+    if (this.enablePayment) {
+      this.router.navigate(['/checkout', this.courseId]);
+      return;
+    }
+    this.apiService.buyCourse(this.courseId).subscribe({
+      next: () => {
+        this.showCustomToast('Berhasil terdaftar! Selamat belajar.', 'success');
+        this.loadCourse();
+      },
+      error: (err) => {
+        this.showCustomToast(err?.error?.message || 'Gagal mendaftar kursus.', 'danger');
+      }
+    });
   }
 
   loadProgress() {
