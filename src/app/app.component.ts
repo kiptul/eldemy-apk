@@ -1,7 +1,6 @@
 import { Component, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { App as CapApp } from '@capacitor/app';
 import { Router } from '@angular/router';
 import { NavController, Platform } from '@ionic/angular';
@@ -26,17 +25,9 @@ export class AppComponent {
   }
 
   initializeApp() {
-    GoogleAuth.initialize({
-      clientId:
-        '928122069790-jh6uvrfqqn6hq6mlj40isk3j5os0e993.apps.googleusercontent.com',
-      scopes: ['profile', 'email'],
-      grantOfflineAccess: true,
-    });
-
     // Global hardware back button handler for Android
     this.platform.backButton.subscribeWithPriority(10, () => {
       this.zone.run(() => {
-        // If exit popup is already showing, dismiss it
         if (this.showExitPopup) {
           this.showExitPopup = false;
           return;
@@ -44,7 +35,6 @@ export class AppComponent {
 
         const url = this.router.url;
 
-        // Main tab pages: show exit confirmation popup
         const tabPages = [
           '/tabs/home',
           '/tabs/courses',
@@ -59,7 +49,6 @@ export class AppComponent {
           return;
         }
 
-        // Exit pages: exit the app directly
         const exitPages = [
           '/login',
           '/register',
@@ -78,7 +67,6 @@ export class AppComponent {
         if (shouldExit) {
           CapApp.exitApp();
         } else {
-          // Sub-pages: navigate back properly
           this.navCtrl.back();
         }
       });

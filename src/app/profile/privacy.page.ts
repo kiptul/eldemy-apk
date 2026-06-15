@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ToastController, AlertController } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
@@ -90,6 +90,19 @@ import {
         </div>
       </div>
     </ion-content>
+
+    <div class="confirm-backdrop" *ngIf="showDeleteConfirm" (click)="cancelDeleteAccount()"></div>
+    <div class="confirm-modal" *ngIf="showDeleteConfirm">
+      <div class="confirm-icon"><ion-icon name="trash-outline"></ion-icon></div>
+      <h2 class="confirm-title">Hapus Akun</h2>
+      <p class="confirm-text">Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus permanen dan tidak dapat dipulihkan.</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelDeleteAccount()" [disabled]="isDeleting">Batal</button>
+        <button class="btn-delete" (click)="doDeleteAccount()" [disabled]="isDeleting">{{ isDeleting ? 'Menghapus...' : 'Ya, Hapus' }}</button>
+      </div>
+    </div>
+
+    <div class="custom-toast" [ngClass]="toastType" *ngIf="toastVisible">{{ toastMessage }}</div>
   `,
   styles: [`
     :host {
@@ -281,12 +294,24 @@ import {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .confirm-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; animation: fadeIn 0.2s ease; }
+    .confirm-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: calc(100% - 60px); max-width: 340px; background: #fff; border-radius: 24px; padding: 28px 24px; z-index: 1001; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.25); animation: fadeIn 0.25s ease; }
+    .confirm-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(229,57,53,0.1); color: #e53935; font-size: 2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .confirm-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--dark); margin: 0 0 8px; }
+    .confirm-text { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin: 0 0 24px; }
+    .confirm-actions { display: flex; gap: 12px; }
+    .confirm-actions button { flex: 1; padding: 14px; border-radius: 14px; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+    .btn-cancel { background: #f1f5f9; color: #475569; }
+    .btn-delete { background: #e53935; color: #fff; }
+    .confirm-actions button:disabled { opacity: 0.6; }
+    .custom-toast { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #2D3748; color: #fff; padding: 14px 22px; border-radius: 14px; font-size: 0.9rem; font-weight: 600; z-index: 1100; max-width: calc(100% - 40px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); animation: fadeIn 0.25s ease; }
+    .custom-toast.success { background: #16a34a; }
+    .custom-toast.danger { background: #e53935; }
+    .custom-toast.warning { background: #f59e0b; }
   `]
 })
 export class PrivacyPage {
   private router = inject(Router);
-  private toastCtrl = inject(ToastController);
-  private alertCtrl = inject(AlertController);
   private apiService = inject(ApiService);
 
   currentPassword = '';
@@ -297,6 +322,13 @@ export class PrivacyPage {
   showConfirmPassword = false;
   isChangingPassword = false;
 
+  showDeleteConfirm = false;
+  isDeleting = false;
+  toastMessage = '';
+  toastType = '';
+  toastVisible = false;
+  private toastTimer: any = null;
+
   constructor() {
     addIcons({
       chevronBackOutline, lockClosedOutline, eyeOutline, eyeOffOutline,
@@ -304,11 +336,12 @@ export class PrivacyPage {
     });
   }
 
-  async showToast(msg: string, color: string = 'success') {
-    const toast = await this.toastCtrl.create({
-      message: msg, duration: 2000, color, position: 'top'
-    });
-    toast.present();
+  showToast(msg: string, color: string = 'success') {
+    this.toastMessage = msg;
+    this.toastType = color;
+    this.toastVisible = true;
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => { this.toastVisible = false; }, 2500);
   }
 
   changePassword() {
@@ -336,32 +369,31 @@ export class PrivacyPage {
     }, 1500);
   }
 
-  async confirmDeleteAccount() {
-    const alert = await this.alertCtrl.create({
-      header: 'Hapus Akun',
-      message: 'Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus secara permanen dan tidak dapat dipulihkan.',
-      cssClass: 'custom-alert',
-      buttons: [
-        { text: 'Batal', role: 'cancel' },
-        {
-          text: 'Ya, Hapus',
-          cssClass: 'danger-button',
-          handler: () => {
-            this.apiService.deleteAccount().subscribe({
-              next: () => {
-                localStorage.removeItem('token');
-                this.showToast('Akun berhasil dihapus.');
-                this.router.navigate(['/login'], { replaceUrl: true });
-              },
-              error: (err) => {
-                this.showToast(err?.error?.message || 'Gagal menghapus akun.', 'danger');
-              }
-            });
-          }
-        }
-      ]
+  confirmDeleteAccount() {
+    this.showDeleteConfirm = true;
+  }
+
+  cancelDeleteAccount() {
+    this.showDeleteConfirm = false;
+  }
+
+  doDeleteAccount() {
+    if (this.isDeleting) return;
+    this.isDeleting = true;
+    this.apiService.deleteAccount().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.isDeleting = false;
+        this.showDeleteConfirm = false;
+        this.showToast('Akun berhasil dihapus.');
+        this.router.navigate(['/login'], { replaceUrl: true });
+      },
+      error: (err) => {
+        this.isDeleting = false;
+        this.showDeleteConfirm = false;
+        this.showToast(err?.error?.message || 'Gagal menghapus akun.', 'danger');
+      }
     });
-    await alert.present();
   }
 
   goBack() {

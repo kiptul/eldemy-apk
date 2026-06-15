@@ -38,7 +38,7 @@ export class HomePage implements OnInit {
   selectedCategories: string[] = [];
   selectedPriceRange: string = 'all';
 
-  rekomendasiLimit = 3;
+  rekomendasiLimit = 999;
 
   searchQuery: string = '';
   appliedSearchQuery: string = '';
