@@ -347,7 +347,16 @@ export class PrivacyPage {
           text: 'Ya, Hapus',
           cssClass: 'danger-button',
           handler: () => {
-            this.showToast('Fitur ini belum tersedia.', 'warning');
+            this.apiService.deleteAccount().subscribe({
+              next: () => {
+                localStorage.removeItem('token');
+                this.showToast('Akun berhasil dihapus.');
+                this.router.navigate(['/login'], { replaceUrl: true });
+              },
+              error: (err) => {
+                this.showToast(err?.error?.message || 'Gagal menghapus akun.', 'danger');
+              }
+            });
           }
         }
       ]

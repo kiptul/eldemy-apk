@@ -61,6 +61,10 @@ export class ApiService {
     return this.http.put(`${this.apiUrl}/user/nickname`, { nickname }, this.getHeaders());
   }
 
+  deleteAccount(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/user`, this.getHeaders());
+  }
+
   getCourses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/courses`, this.getHeaders());
   }

@@ -59,7 +59,7 @@ export class LoginPage {
     try {
       const tokens = await this.googleAuthService.signIn();
 
-      if (!tokens.accessToken && !tokens.idToken) { alert('DEBUG: token Google kosong.'); return; }
+      if (!tokens.accessToken && !tokens.idToken) { alert('Gagal masuk dengan Google. Silakan coba lagi.'); return; }
 
       this.apiService.googleLogin(tokens).subscribe({
         next: (res: any) => {
@@ -69,11 +69,11 @@ export class LoginPage {
           }
         },
         error: (err) => {
-          alert('DEBUG backend: ' + (err?.error?.message || err?.message || JSON.stringify(err)));
+          alert('Gagal masuk dengan Google. Silakan coba lagi.');
         },
       });
     } catch (error: any) {
-      alert('DEBUG native: ' + [error?.message, error?.code, String(error)].filter(Boolean).join(' | '));
+      alert('Gagal masuk dengan Google. Silakan coba lagi.');
     }
   }
 
