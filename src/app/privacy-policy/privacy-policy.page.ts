@@ -40,7 +40,7 @@ import {
             <p class="policy-subtitle">Eldemy — Platform Kursus Online</p>
             <div class="update-badge">
               <ion-icon name="refresh-outline"></ion-icon>
-              <span>Terakhir diperbarui: 1 Juni 2026</span>
+              <span>Terakhir diperbarui: 16 Juni 2026</span>
             </div>
           </div>
 
@@ -224,16 +224,40 @@ import {
                   <div class="right-label">Menolak pengiriman notifikasi non-esensial</div>
                 </div>
               </div>
+              <div class="delete-note">
+                <p><strong>Cara menghapus akun:</strong></p>
+                <p>• Melalui aplikasi: <strong>Profil → Privasi &amp; Keamanan → Hapus Akun</strong>, lalu konfirmasi.</p>
+                <p>• Melalui email: kirim permintaan ke <strong>eldemycourses&#64;gmail.com</strong>.</p>
+                <p style="margin-top: 8px;">Penghapusan bersifat permanen dan mencakup seluruh data Anda: akun, profil, progres belajar, riwayat pembelian, hasil kuis, dan sertifikat.</p>
+              </div>
             </div>
           </div>
 
-          <!-- Section 7 -->
+          <!-- Section 7: Privasi Anak -->
+          <div class="section fade-in" style="animation-delay: 0.32s">
+            <div class="section-header">
+              <div class="section-icon green">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              <h2 class="section-title">7. Privasi Anak</h2>
+            </div>
+            <div class="section-body">
+              <p>
+                Eldemy menyediakan materi pembelajaran untuk jenjang SD, SMP, dan SMA/SMK.
+                Untuk pengguna yang berusia di bawah 13 tahun, penggunaan aplikasi harus dilakukan
+                dengan persetujuan dan pengawasan orang tua atau wali. Kami tidak dengan sengaja
+                mengumpulkan data pribadi anak tanpa persetujuan orang tua.
+              </p>
+            </div>
+          </div>
+
+          <!-- Section 8 -->
           <div class="section fade-in" style="animation-delay: 0.35s">
             <div class="section-header">
               <div class="section-icon pink">
                 <ion-icon name="mail-outline"></ion-icon>
               </div>
-              <h2 class="section-title">7. Hubungi Kami</h2>
+              <h2 class="section-title">8. Hubungi Kami</h2>
             </div>
             <div class="section-body">
               <p>
@@ -243,7 +267,7 @@ import {
               <div class="contact-card">
                 <div class="contact-row">
                   <span class="contact-label">📧 Email</span>
-                  <span class="contact-value">mewarrahman&#64;gmail.com</span>
+                  <span class="contact-value">eldemycourses&#64;gmail.com</span>
                 </div>
                 <div class="contact-divider"></div>
                 <div class="contact-row">
@@ -610,6 +634,28 @@ import {
       color: #b0b0b0;
       line-height: 1.45;
       font-weight: 500;
+    }
+
+    /* ---- Delete account note ---- */
+    .delete-note {
+      margin-top: 14px;
+      background: rgba(231, 76, 60, 0.08);
+      border: 1px solid rgba(231, 76, 60, 0.18);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .delete-note p {
+      font-family: "Inter", sans-serif;
+      font-size: 0.8rem;
+      color: #c0c0c0;
+      line-height: 1.55;
+      margin: 0 0 4px;
+    }
+
+    .delete-note strong {
+      color: #f0f0f0;
+      font-weight: 700;
     }
 
     /* ---- Contact Card ---- */

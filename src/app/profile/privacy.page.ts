@@ -360,13 +360,19 @@ export class PrivacyPage {
 
     this.isChangingPassword = true;
     
-    setTimeout(() => {
-      this.showToast('Kata sandi berhasil diperbarui!');
-      this.currentPassword = '';
-      this.newPassword = '';
-      this.confirmPassword = '';
-      this.isChangingPassword = false;
-    }, 1500);
+    this.apiService.changePassword(this.currentPassword, this.newPassword).subscribe({
+      next: () => {
+        this.showToast('Kata sandi berhasil diperbarui!');
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.isChangingPassword = false;
+      },
+      error: (err) => {
+        this.showToast(err?.error?.message || 'Gagal mengubah kata sandi.', 'danger');
+        this.isChangingPassword = false;
+      }
+    });
   }
 
   confirmDeleteAccount() {

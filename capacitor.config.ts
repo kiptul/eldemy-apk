@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.eldemy.student',
+  appId: 'com.eltaimayu.eldemy',
   appName: 'Eldemy',
   webDir: 'www',
 };

@@ -4,10 +4,10 @@ android {
     namespace = "com.eldemy.student"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.eldemy.student"
+        applicationId "com.eltaimayu.eldemy"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 8
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Eldemy</string>
     <string name="title_activity_main">Eldemy</string>
-    <string name="package_name">com.eldemy.student</string>
-    <string name="custom_url_scheme">com.eldemy.student</string>
+    <string name="package_name">com.eltaimayu.eldemy</string>
+    <string name="custom_url_scheme">com.eltaimayu.eldemy</string>
     <string name="server_client_id">25668087734-k83acc3es2epk29r8vqb94lp42j3i4it.apps.googleusercontent.com</string>
 </resources>

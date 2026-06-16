@@ -482,7 +482,7 @@ export class MaterialDetailPage implements OnInit, AfterViewInit, OnDestroy {
           this.cdr.detectChanges();
           if (res.success) {
             this.showCustomToast('🎉 Materi selesai! Kembali ke kurikulum...', 'success');
-            this.navCtrl.navigateBack(`/tabs/course-detail/${this.courseId}`);
+            this.navCtrl.back();
           }
         });
       },

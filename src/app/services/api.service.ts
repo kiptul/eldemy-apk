@@ -65,6 +65,13 @@ export class ApiService {
     return this.http.delete(`${this.apiUrl}/user`, this.getHeaders());
   }
 
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/user/password`, {
+      current_password: currentPassword,
+      new_password: newPassword
+    }, this.getHeaders());
+  }
+
   getCourses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/courses`, this.getHeaders());
   }

@@ -38,7 +38,7 @@ import {
             <div class="contact-card" (click)="openEmail()">
               <div class="icon-wrap pink"><ion-icon name="mail-outline"></ion-icon></div>
               <div class="contact-label">Email</div>
-              <div class="contact-desc">mewarrahman&#64;gmail.com</div>
+              <div class="contact-desc">eldemycourses&#64;gmail.com</div>
             </div>
           </div>
         </div>
@@ -347,7 +347,7 @@ export class HelpPage implements OnInit {
   }
 
   openEmail() {
-    window.open('mailto:mewarrahman@gmail.com?subject=Bantuan%20Eldemy', '_blank');
+    window.open('mailto:eldemycourses@gmail.com?subject=Bantuan%20Eldemy', '_blank');
   }
 
   openTerms() {
