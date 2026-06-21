@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -26,8 +26,8 @@ import {
           <div class="spacer"></div>
         </div>
 
-        <!-- Change Password -->
-        <div class="section fade-in">
+        <!-- Change Password (khusus user email/password) -->
+        <div class="section fade-in" *ngIf="!isGoogleUser">
           <div class="section-title">Ubah Kata Sandi</div>
           
           <div class="form-card">
@@ -76,6 +76,16 @@ import {
 
         <!-- Security Settings (Removed Biometric) -->
 
+        <!-- Info untuk user login Google -->
+        <div class="section fade-in" *ngIf="isGoogleUser">
+          <div class="section-title">Keamanan Akun</div>
+          <div class="form-card">
+            <p style="font-size: 0.9rem; color: #64748b; line-height: 1.6; margin: 0;">
+              Anda masuk menggunakan akun Google. Kata sandi dikelola langsung oleh Google, jadi tidak perlu diubah dari aplikasi ini.
+            </p>
+          </div>
+        </div>
+
         <!-- Danger Zone -->
         <div class="section fade-in" style="animation-delay: 0.2s">
           <div class="section-title danger-title">Zona Berbahaya</div>
@@ -91,8 +101,8 @@ import {
       </div>
     </ion-content>
 
-    <div class="confirm-backdrop" *ngIf="showDeleteConfirm" (click)="cancelDeleteAccount()"></div>
-    <div class="confirm-modal" *ngIf="showDeleteConfirm">
+    <div class="confirm-backdrop" [class.closing]="isClosing" *ngIf="showDeleteConfirm" (click)="cancelDeleteAccount()"></div>
+    <div class="confirm-modal" [class.closing]="isClosing" *ngIf="showDeleteConfirm">
       <div class="confirm-icon"><ion-icon name="trash-outline"></ion-icon></div>
       <h2 class="confirm-title">Hapus Akun</h2>
       <p class="confirm-text">Apakah Anda yakin ingin menghapus akun? Semua data Anda akan dihapus permanen dan tidak dapat dipulihkan.</p>
@@ -294,8 +304,14 @@ import {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .confirm-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; animation: fadeIn 0.2s ease; }
-    .confirm-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: calc(100% - 60px); max-width: 340px; background: #fff; border-radius: 24px; padding: 28px 24px; z-index: 1001; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.25); animation: fadeIn 0.25s ease; }
+    .confirm-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; animation: cbFadeIn 0.2s ease; }
+    .confirm-backdrop.closing { animation: cbFadeOut 0.2s ease forwards; }
+    @keyframes cbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes cbFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    .confirm-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: calc(100% - 60px); max-width: 340px; background: #fff; border-radius: 24px; padding: 28px 24px; z-index: 1001; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.25); animation: cmIn 0.28s cubic-bezier(0.16,1,0.3,1); }
+    .confirm-modal.closing { animation: cmOut 0.2s ease forwards; }
+    @keyframes cmIn { from { opacity: 0; transform: translate(-50%, -44%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    @keyframes cmOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -50%) scale(0.92); } }
     .confirm-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(229,57,53,0.1); color: #e53935; font-size: 2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
     .confirm-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--dark); margin: 0 0 8px; }
     .confirm-text { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin: 0 0 24px; }
@@ -310,7 +326,7 @@ import {
     .custom-toast.warning { background: #f59e0b; }
   `]
 })
-export class PrivacyPage {
+export class PrivacyPage implements OnInit {
   private router = inject(Router);
   private apiService = inject(ApiService);
 
@@ -321,9 +337,11 @@ export class PrivacyPage {
   showNewPassword = false;
   showConfirmPassword = false;
   isChangingPassword = false;
+  isGoogleUser = false;
 
   showDeleteConfirm = false;
   isDeleting = false;
+  isClosing = false;
   toastMessage = '';
   toastType = '';
   toastVisible = false;
@@ -333,6 +351,17 @@ export class PrivacyPage {
     addIcons({
       chevronBackOutline, lockClosedOutline, eyeOutline, eyeOffOutline,
       keyOutline, fingerPrintOutline, trashOutline
+    });
+  }
+
+  ngOnInit() {
+    this.apiService.getUserProfile().subscribe({
+      next: (res: any) => {
+        if (res?.success && res.data) {
+          this.isGoogleUser = !!res.data.google_id;
+        }
+      },
+      error: () => {}
     });
   }
 
@@ -380,7 +409,15 @@ export class PrivacyPage {
   }
 
   cancelDeleteAccount() {
-    this.showDeleteConfirm = false;
+    this.closeDeleteModal();
+  }
+
+  closeDeleteModal() {
+    this.isClosing = true;
+    setTimeout(() => {
+      this.showDeleteConfirm = false;
+      this.isClosing = false;
+    }, 200);
   }
 
   doDeleteAccount() {
@@ -396,7 +433,7 @@ export class PrivacyPage {
       },
       error: (err) => {
         this.isDeleting = false;
-        this.showDeleteConfirm = false;
+        this.closeDeleteModal();
         this.showToast(err?.error?.message || 'Gagal menghapus akun.', 'danger');
       }
     });

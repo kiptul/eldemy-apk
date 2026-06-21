@@ -72,3 +72,6 @@ Thumbs.db
 *.bak
 
 *.bak*
+
+# Materi listing Play Store (bukan source code)
+/keperluan listing/
