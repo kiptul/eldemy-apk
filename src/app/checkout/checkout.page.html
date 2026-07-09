@@ -1,0 +1,103 @@
+<ion-content class="checkout-content">
+  <app-header [showBackButton]="true"></app-header>
+  
+  <div class="content-wrapper" *ngIf="!isLoading && course">
+    <h1 class="page-title">Ringkasan Pesanan</h1>
+    
+    <div class="summary-card">
+      <div class="course-info">
+        <div class="img-wrapper" [style.background]="'url(' + (course.thumbnail || 'assets/placeholder.png') + ') center/cover no-repeat'"></div>
+        <div class="details">
+          <h3>{{ course.title }}</h3>
+          <p class="instructor">{{ course.instructor?.name || 'Instruktur Eldemy' }}</p>
+        </div>
+      </div>
+      
+      <div class="custom-divider"></div>
+      
+      <div class="price-details">
+         <div class="price-row">
+           <span class="label">Harga Dasar Kursus</span>
+           <span class="value">Rp {{ course.base_price | number }}</span>
+         </div>
+         <div class="price-row">
+           <span class="label">Biaya Penanganan</span>
+           <span class="value free">Gratis</span>
+         </div>
+         <div class="custom-divider dashed"></div>
+         <div class="price-row total-row">
+           <span class="label">Total Pembayaran</span>
+           <span class="value total-price">Rp {{ course.base_price | number }}</span>
+         </div>
+      </div>
+    </div>
+    
+    <div class="secure-badge">
+      <div class="shield-circle">
+        <ion-icon name="shield-checkmark"></ion-icon>
+      </div>
+      <p>Pembayaran Anda diproses secara aman menggunakan sistem enkripsi terstandar melalui <strong>iPaymu Secure Gateway</strong>.</p>
+    </div>
+    
+    <!-- Informasi Fitur -->
+    <div class="features-list">
+       <div class="feat-item">
+         <ion-icon name="checkmark-circle-outline"></ion-icon>
+         <span>Akses selamanya ke seluruh materi & video</span>
+       </div>
+       <div class="feat-item">
+         <ion-icon name="checkmark-circle-outline"></ion-icon>
+         <span>Sertifikat kelulusan digital</span>
+       </div>
+    </div>
+
+    <div style="height: 100px;"></div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Mempersiapkan detail pesanan...</p>
+  </div>
+</ion-content>
+
+<!-- Bottom Sticky Footer -->
+<ion-footer class="checkout-sticky-footer ion-no-border" *ngIf="!isLoading && course" mode="md">
+  <div class="footer-wrap">
+    <button class="buy-btn pulse-glow full-width" (click)="payNow()" [disabled]="isProcessing">
+      <span *ngIf="!isProcessing">
+        Pilih Metode Pembayaran
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </span>
+      <span *ngIf="isProcessing">⏳ Memproses...</span>
+    </button>
+  </div>
+</ion-footer>
+
+<!-- Custom Loading Overlay (replaces broken LoadingController) -->
+<div class="custom-loading-overlay" *ngIf="isProcessing">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <p>{{ processingMessage }}</p>
+  </div>
+</div>
+
+<!-- Custom Payment Dialog (replaces broken AlertController) -->
+<div class="custom-dialog-overlay" *ngIf="showPaymentDialog">
+  <div class="custom-dialog">
+    <div class="dialog-header">
+      <h3>Instruksi Pembayaran</h3>
+      <p class="subtitle">Metode Pembayaran Terpilih</p>
+    </div>
+    <div class="dialog-body">
+      Silakan selesaikan pembayaran Anda pada halaman yang terbuka. Jika halaman pembayaran tidak terbuka otomatis, silakan klik tombol "Buka Pembayaran" di bawah ini.
+    </div>
+    <div class="dialog-actions">
+      <button class="btn-primary" (click)="onOpenPayment()">🔗 Buka Pembayaran</button>
+      <button class="btn-secondary" (click)="onConfirmPayment()">✅ Saya Sudah Membayar</button>
+      <button class="btn-cancel" (click)="onCancelPayment()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Toast (replaces broken ToastController) -->
+<div class="custom-toast" [ngClass]="toastType" *ngIf="toastVisible">{{ toastMessage }}</div>

@@ -1,0 +1,179 @@
+ion-content {
+  --background: transparent;
+}
+
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/assets/images/backgrounds/Eldemy-welcome-bg.jpeg") no-repeat center center / cover;
+  z-index: -1;
+}
+
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.bottom-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(35, 35, 35, 0.7) 0%,
+    rgba(18, 18, 18, 0.88) 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  padding: 32px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* ---- Brand ---- */
+.brand-section {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.logo-text {
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 3rem;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -2px;
+}
+
+.tagline {
+  font-family: "Inter", sans-serif;
+  color: #d0d0d0;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+/* ---- Feature Badges ---- */
+.features-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.feature-badge {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.badge-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-icon-wrapper svg {
+  display: block;
+}
+
+.icon-cyan {
+  color: #5dc3b6;
+  background: rgba(93, 195, 182, 0.2);
+}
+
+.icon-orange {
+  color: #fca048;
+  background: rgba(252, 160, 72, 0.2);
+}
+
+.badge-text {
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* ---- Get Started Button ---- */
+.btn-get-started {
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  border-radius: 30px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.15s ease;
+  margin-bottom: 16px;
+
+  &:active {
+    transform: scale(0.98);
+    background: #1a1a1a;
+  }
+}
+
+.arrow-icon {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+/* ---- Daftar Link ---- */
+.daftar-link {
+  font-size: 0.85rem;
+  font-family: "Inter", sans-serif;
+  color: #aaaaaa;
+  margin: 0;
+  padding-bottom: 4px;
+
+  b {
+    color: #F06292;
+    font-weight: 800;
+    cursor: pointer;
+  }
+}
+
+/* ---- Login Link ---- */
+.login-link {
+  font-size: 0.75rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding-bottom: 6px;
+}
+
+.muted-text {
+  color: #888888;
+  margin-right: 5px;
+}
+
+.link-text {
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}

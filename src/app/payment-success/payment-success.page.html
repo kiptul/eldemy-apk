@@ -1,0 +1,67 @@
+<ion-content class="success-page">
+  <div class="custom-header">
+    <h1 class="logo">Eldemy</h1>
+    <div class="avatar">
+      <img [src]="user?.avatar_url || 'https://ui-avatars.com/api/?name=' + (user?.name || 'U') + '&background=0D8ABC&color=fff'" alt="Avatar" />
+    </div>
+  </div>
+
+  <div class="success-body">
+    <div class="icon-wrapper">
+      <div class="check-circle">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </div>
+    </div>
+
+    <h2 class="title">Pembayaran<br/>Berhasil!</h2>
+    <p class="subtitle">
+      Perjalanan Anda menuju pengetahuan pilihan dimulai sekarang. Kami telah mengirimkan tanda terima ke email Anda.
+    </p>
+
+    <div class="order-card" *ngIf="course">
+      <p class="order-label">DETAIL PESANAN</p>
+      <div class="course-info">
+        <img [src]="course.thumbnail || 'https://placehold.co/400x300?text=Course'" class="thumbnail" />
+        <div class="course-text">
+          <h3>{{ course.title }}</h3>
+          <p>Kursus • {{ course.level || 'Semua Tingkat' }}</p>
+        </div>
+      </div>
+
+      <div class="order-meta">
+        <div class="meta-item">
+          <span class="label">ID PESANAN</span>
+          <span class="value">{{ orderId }}</span>
+        </div>
+        <div class="meta-item right">
+          <span class="label">TANGGAL</span>
+          <span class="value">{{ currentDate | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="total-section">
+        <span class="total-label">TOTAL DIBAYAR</span>
+        <span class="total-price">{{ course.price | currency:'IDR':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+
+    <button class="primary-btn" (click)="goToMyCourses()">
+      Mulai Belajar Sekarang <ion-icon name="arrow-forward-outline"></ion-icon>
+    </button>
+
+    <div class="action-links">
+      <div class="link-btn">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <span>Unduh<br/>Faktur</span>
+      </div>
+      <div class="link-btn">
+        <ion-icon name="help-circle-outline"></ion-icon>
+        <span>Butuh Bantuan?</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>© 2026 Eldemy Platform • Hak Cipta Dilindungi</p>
+  </div>
+</ion-content>

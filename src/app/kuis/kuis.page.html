@@ -1,0 +1,37 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-button (click)="back()"><ion-icon name="chevron-back-outline"></ion-icon></ion-button></ion-buttons>
+    <ion-title>Kuis</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="loading">Memuat...</div>
+
+  <div class="result" *ngIf="!isLoading && showResult">
+    <ion-icon [name]="result.passed ? 'trophy-outline' : 'close-circle'" [class.pass]="result.passed" [class.fail]="!result.passed"></ion-icon>
+    <div class="score">{{ result.score }}</div>
+    <p class="msg">{{ result.message }}</p>
+    <p class="detail">Benar {{ result.correct_count }} dari {{ result.total_questions }} soal &middot; Nilai terbaik: {{ result.best_score }}</p>
+    <button class="btn-ulangi" (click)="ulangi()"><ion-icon name="refresh-outline"></ion-icon> Ulangi Kuis</button>
+    <button class="btn-back" (click)="back()">Kembali</button>
+  </div>
+
+  <div *ngIf="!isLoading && !showResult && quiz">
+    <div class="kuis-head">
+      <h1>{{ quiz.title }}</h1>
+      <p>{{ quiz.total_questions }} soal &middot; nilai minimal {{ quiz.min_score }}<span *ngIf="quiz.best_score != null"> &middot; terbaik {{ quiz.best_score }}</span></p>
+    </div>
+
+    <div class="soal" *ngFor="let q of quiz.questions; let qi = index">
+      <p class="pertanyaan"><b>{{ qi + 1 }}.</b> {{ q.question }}</p>
+      <div class="opsi" *ngFor="let opt of q.options; let oi = index" [class.selected]="isPilih(qi, oi)" (click)="pilih(qi, oi)">
+        <span class="huruf">{{ ['A','B','C','D'][oi] }}</span> {{ opt }}
+      </div>
+    </div>
+
+    <button class="btn-submit" (click)="submit()" [disabled]="isSubmitting">
+      {{ isSubmitting ? "Mengirim..." : "Kumpulkan (" + terjawab + "/" + quiz.questions.length + ")" }}
+    </button>
+  </div>
+</ion-content>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kebijakan Privasi — Eldemy</title>
+  <meta name="description" content="Kebijakan Privasi aplikasi pembelajaran Eldemy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0a;
+      background-image:
+        radial-gradient(circle at 20% 0%, rgba(231,76,60,0.10), transparent 40%),
+        radial-gradient(circle at 80% 10%, rgba(59,130,246,0.08), transparent 40%);
+      color: #b0b0b0;
+      line-height: 1.65;
+      padding: 0 16px 60px;
+      min-height: 100vh;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+
+    /* Header */
+    header { text-align: center; padding: 56px 0 36px; }
+    .shield-icon {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(231,76,60,0.25), rgba(231,76,60,0.08));
+      border: 1px solid rgba(231,76,60,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.8rem;
+    }
+    .policy-title {
+      font-weight: 800; font-size: 1.9rem; color: #fff;
+      letter-spacing: -0.8px;
+    }
+    .policy-subtitle { color: #888; font-size: 0.9rem; margin-top: 6px; font-weight: 500; }
+    .update-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 7px 16px; border-radius: 100px;
+      font-size: 0.74rem; font-weight: 600; color: #aaa;
+    }
+
+    /* Intro */
+    .intro {
+      font-size: 0.92rem; color: #c0c0c0; line-height: 1.75;
+      text-align: center; margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    /* Sections */
+    .section { margin-bottom: 26px; }
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .section-icon {
+      width: 38px; height: 38px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1.15rem;
+      background: rgba(231,76,60,0.15);
+    }
+    .section-icon.blue   { background: rgba(59,130,246,0.15); }
+    .section-icon.green  { background: rgba(16,185,129,0.15); }
+    .section-icon.orange { background: rgba(245,158,11,0.15); }
+    .section-icon.purple { background: rgba(139,92,246,0.15); }
+    .section-icon.teal   { background: rgba(20,184,166,0.15); }
+    .section-icon.pink   { background: rgba(236,72,153,0.15); }
+    .section-title {
+      font-weight: 800; font-size: 1.1rem; color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .section-body {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px; padding: 18px 18px;
+    }
+    .section-body p { font-size: 0.86rem; color: #b0b0b0; line-height: 1.7; margin-bottom: 0; }
+    .section-body p + p { margin-top: 10px; }
+
+    .info-item { display: flex; align-items: flex-start; gap: 12px; margin-top: 12px; }
+    .info-item p { margin: 0; font-size: 0.85rem; }
+    .info-item strong { color: #d4d4d4; font-weight: 700; }
+    .bullet {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #e74c3c; flex-shrink: 0; margin-top: 8px;
+    }
+    .bullet.blue { background: #60a5fa; }
+    .bullet.orange { background: #fbbf24; }
+
+    .third-party-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 12px 14px; margin-top: 10px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .third-party-card strong { font-size: 0.86rem; font-weight: 700; color: #d4d4d4; }
+    .third-party-card span { font-size: 0.78rem; color: #888; }
+
+    .rights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .right-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 14px 12px; text-align: center;
+    }
+    .right-emoji { font-size: 1.5rem; margin-bottom: 8px; }
+    .right-label { font-size: 0.78rem; color: #b0b0b0; line-height: 1.45; font-weight: 500; }
+
+    .delete-note {
+      margin-top: 14px;
+      background: rgba(231,76,60,0.08);
+      border: 1px solid rgba(231,76,60,0.18);
+      border-radius: 14px; padding: 14px 16px;
+    }
+    .delete-note p { font-size: 0.82rem; color: #c0c0c0; line-height: 1.55; margin: 0 0 4px; }
+    .delete-note strong { color: #f0f0f0; font-weight: 700; }
+    .delete-note a { color: #f472b6; text-decoration: none; }
+
+    /* Contact */
+    .contact-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px; padding: 16px; margin-top: 14px;
+    }
+    .contact-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; gap: 12px; }
+    .contact-label { font-size: 0.84rem; color: #888; font-weight: 600; }
+    .contact-value { font-size: 0.84rem; color: #d4d4d4; font-weight: 700; word-break: break-all; text-align: right; }
+    .contact-value a { color: #f472b6; text-decoration: none; }
+    .contact-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 10px 0; }
+
+    a { color: #60a5fa; }
+
+    /* Footer */
+    footer { margin-top: 24px; text-align: center; }
+    .footer-divider { height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 20px; }
+    .footer-text { font-size: 0.82rem; color: #777; line-height: 1.6; margin: 0 auto 16px; max-width: 560px; }
+    .copyright { font-size: 0.74rem; color: #555; font-weight: 600; letter-spacing: 0.3px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="shield-icon">🛡️</div>
+      <h1 class="policy-title">Kebijakan Privasi</h1>
+      <p class="policy-subtitle">Eldemy — Platform Kursus Online</p>
+      <div class="update-badge">🔄&nbsp; Terakhir diperbarui: 16 Juni 2026</div>
+    </header>
+
+    <p class="intro">
+      Selamat datang di Eldemy. Kami menghargai kepercayaan Anda dan berkomitmen untuk
+      melindungi privasi serta data pribadi Anda. Kebijakan Privasi ini menjelaskan
+      bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda saat
+      menggunakan aplikasi dan layanan kami.
+    </p>
+
+    <!-- Section 1 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon">👤</div>
+        <h2 class="section-title">1. Data yang Kami Kumpulkan</h2>
+      </div>
+      <div class="section-body">
+        <p>Saat Anda menggunakan Eldemy, kami dapat mengumpulkan informasi berikut:</p>
+        <div class="info-item"><span class="bullet"></span><p><strong>Data Akun:</strong> Nama lengkap, nama panggilan, alamat email, dan foto profil yang Anda berikan saat registrasi atau melalui login Google.</p></div>
+        <div class="info-item"><span class="bullet"></span><p><strong>Data Pembelajaran:</strong> Riwayat kursus yang dibeli, progres penyelesaian materi, hasil kuis, dan sertifikat yang diterbitkan.</p></div>
+        <div class="info-item"><span class="bullet"></span><p><strong>Data Transaksi:</strong> Informasi pembelian kursus termasuk ID pesanan, jumlah pembayaran, metode pembayaran, dan status transaksi.</p></div>
+        <div class="info-item"><span class="bullet"></span><p><strong>Data Teknis:</strong> Jenis perangkat, sistem operasi, versi aplikasi, dan log aktivitas untuk keperluan debugging dan peningkatan layanan.</p></div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon blue">📊</div>
+        <h2 class="section-title">2. Penggunaan Data</h2>
+      </div>
+      <div class="section-body">
+        <p>Kami menggunakan data Anda untuk:</p>
+        <div class="info-item"><span class="bullet blue"></span><p>Menyediakan dan mengelola akun Anda di platform Eldemy.</p></div>
+        <div class="info-item"><span class="bullet blue"></span><p>Memproses pembelian kursus dan memverifikasi pembayaran melalui payment gateway yang terintegrasi.</p></div>
+        <div class="info-item"><span class="bullet blue"></span><p>Melacak progres belajar Anda, menyimpan hasil kuis, dan menerbitkan sertifikat kelulusan.</p></div>
+        <div class="info-item"><span class="bullet blue"></span><p>Mengirimkan notifikasi penting terkait status pembayaran, pembaruan kursus, dan pencapaian Anda.</p></div>
+        <div class="info-item"><span class="bullet blue"></span><p>Meningkatkan kualitas layanan, performa aplikasi, dan pengalaman pengguna.</p></div>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon green">💳</div>
+        <h2 class="section-title">3. Pembayaran &amp; Keamanan Finansial</h2>
+      </div>
+      <div class="section-body">
+        <p>Eldemy menggunakan layanan payment gateway pihak ketiga (iPaymu) untuk memproses pembayaran. Kami <strong>tidak menyimpan</strong> informasi kartu kredit, debit, atau detail perbankan Anda secara langsung di server kami.</p>
+        <p>Seluruh transaksi pembayaran diproses melalui koneksi terenkripsi dan sesuai dengan standar keamanan industri. Kami hanya menyimpan referensi transaksi (ID pesanan dan status pembayaran) untuk keperluan verifikasi dan riwayat pembelian.</p>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon orange">🔒</div>
+        <h2 class="section-title">4. Keamanan Data</h2>
+      </div>
+      <div class="section-body">
+        <p>Kami menerapkan langkah-langkah keamanan berikut:</p>
+        <div class="info-item"><span class="bullet orange"></span><p>Kata sandi disimpan dalam bentuk hash terenkripsi (bcrypt) dan tidak pernah disimpan dalam teks biasa.</p></div>
+        <div class="info-item"><span class="bullet orange"></span><p>Autentikasi API menggunakan token berbasis Sanctum dengan transmisi data terenkripsi (HTTPS).</p></div>
+        <div class="info-item"><span class="bullet orange"></span><p>Login melalui Google OAuth 2.0 diverifikasi langsung ke server Google untuk memastikan keaslian identitas.</p></div>
+        <div class="info-item"><span class="bullet orange"></span><p>Aplikasi menerapkan perlindungan layar untuk mencegah tangkapan layar / perekaman pada konten pembelajaran.</p></div>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon purple">🌐</div>
+        <h2 class="section-title">5. Layanan Pihak Ketiga</h2>
+      </div>
+      <div class="section-body">
+        <p>Eldemy mengintegrasikan layanan pihak ketiga berikut yang mungkin mengumpulkan data sesuai kebijakan privasi mereka masing-masing:</p>
+        <div class="third-party-card"><strong>Google Sign-In</strong><span>Untuk autentikasi akun dan login cepat</span></div>
+        <div class="third-party-card"><strong>iPaymu Payment Gateway</strong><span>Untuk pemrosesan pembayaran kursus</span></div>
+        <div class="third-party-card"><strong>Google Fonts</strong><span>Untuk tampilan tipografi di aplikasi</span></div>
+        <p style="margin-top: 12px; font-size: 0.8rem; color: #888;">Kami menyarankan Anda untuk membaca kebijakan privasi dari masing-masing layanan pihak ketiga tersebut.</p>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section" id="hapus-akun">
+      <div class="section-header">
+        <div class="section-icon teal">🗑️</div>
+        <h2 class="section-title">6. Hak Pengguna &amp; Penghapusan Akun</h2>
+      </div>
+      <div class="section-body">
+        <p>Sebagai pengguna Eldemy, Anda memiliki hak untuk:</p>
+        <div class="rights-grid">
+          <div class="right-card"><div class="right-emoji">📋</div><div class="right-label">Mengakses data pribadi yang kami simpan tentang Anda</div></div>
+          <div class="right-card"><div class="right-emoji">✏️</div><div class="right-label">Memperbarui atau mengoreksi informasi profil Anda</div></div>
+          <div class="right-card"><div class="right-emoji">🗑️</div><div class="right-label">Meminta penghapusan akun dan data pribadi Anda</div></div>
+          <div class="right-card"><div class="right-emoji">🚫</div><div class="right-label">Menolak pengiriman notifikasi non-esensial</div></div>
+        </div>
+        <div class="delete-note">
+          <p><strong>Cara menghapus akun:</strong></p>
+          <p>• Melalui aplikasi: <strong>Profil → Privasi &amp; Keamanan → Hapus Akun</strong>, lalu konfirmasi.</p>
+          <p>• Melalui email: kirim permintaan ke <a href="mailto:eldemycourses@gmail.com">eldemycourses@gmail.com</a>.</p>
+          <p style="margin-top: 8px;">Penghapusan bersifat permanen dan mencakup seluruh data Anda: akun, profil, progres belajar, riwayat pembelian, hasil kuis, dan sertifikat.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon green">🧒</div>
+        <h2 class="section-title">7. Privasi Anak</h2>
+      </div>
+      <div class="section-body">
+        <p>Eldemy menyediakan materi pembelajaran untuk jenjang SD, SMP, dan SMA/SMK. Untuk pengguna yang berusia di bawah 13 tahun, penggunaan aplikasi harus dilakukan dengan persetujuan dan pengawasan orang tua atau wali. Kami tidak dengan sengaja mengumpulkan data pribadi anak tanpa persetujuan orang tua.</p>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon pink">✉️</div>
+        <h2 class="section-title">8. Hubungi Kami</h2>
+      </div>
+      <div class="section-body">
+        <p>Jika Anda memiliki pertanyaan, kekhawatiran, atau permintaan terkait kebijakan privasi ini, silakan hubungi kami melalui:</p>
+        <div class="contact-card">
+          <div class="contact-row">
+            <span class="contact-label">📧 Email</span>
+            <span class="contact-value"><a href="mailto:eldemycourses@gmail.com">eldemycourses@gmail.com</a></span>
+          </div>
+          <div class="contact-divider"></div>
+          <div class="contact-row">
+            <span class="contact-label">🌐 Website</span>
+            <span class="contact-value">eldemy.eltaimayu.my.id</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-divider"></div>
+      <p class="footer-text">
+        Dengan menggunakan aplikasi Eldemy, Anda menyetujui pengumpulan dan penggunaan
+        informasi sesuai dengan Kebijakan Privasi ini. Kami dapat memperbarui kebijakan ini
+        dari waktu ke waktu dan akan memberitahu Anda melalui notifikasi di aplikasi.
+      </p>
+      <p class="copyright">© 2026 Eldemy. Hak cipta dilindungi.</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Mapelku</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="kelas-badge" *ngIf="kelas">Kelas {{ kelas }}</div>
+  <div *ngIf="isLoading" class="loading">Memuat mapel...</div>
+  <div class="mapel-grid" *ngIf="!isLoading">
+    <div class="mapel-card" *ngFor="let m of mapelList" (click)="buka(m)">
+      <div class="mapel-icon"><ion-icon name="book-outline"></ion-icon></div>
+      <div class="mapel-info">
+        <h3>{{ m.nama }}</h3>
+        <p><ion-icon name="person-outline"></ion-icon> {{ m.guru }}</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+    </div>
+    <div class="empty" *ngIf="mapelList.length === 0">Belum ada mata pelajaran.</div>
+  </div>
+</ion-content>

@@ -1,0 +1,27 @@
+<div class="custom-header" [ngClass]="{'transparent-header': transparent}">
+  <div class="left-section">
+    <div class="back-btn-wrap" *ngIf="showBackButton" (click)="goBack()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </div>
+
+    <div class="brand-wrap" *ngIf="!showBackButton">
+      <div class="avatar-circle">
+        <img [src]="avatarUrl" alt="Avatar" (error)="onAvatarError($event)" />
+      </div>
+      <div class="brand-text">
+        <span class="greeting">Halo, {{ user?.nickname || user?.name?.split(' ')[0] || 'Pelajar' }} 👋</span>
+        <span class="brand-name">Eldemy</span>
+      </div>
+    </div>
+
+    <span class="page-title" *ngIf="showBackButton && title">{{ title }}</span>
+  </div>
+
+  <div class="right-section">
+    <div class="icon-btn notification-btn" *ngIf="!showBackButton" (click)="openNotifications()">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <span class="badge" *ngIf="unreadNotifCount > 0">{{ unreadNotifCount > 9 ? '9+' : unreadNotifCount }}</span>
+    </div>
+  </div>
+</div>
+

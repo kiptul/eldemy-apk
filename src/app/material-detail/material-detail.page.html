@@ -1,0 +1,32 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="back()"><ion-icon name="chevron-back-outline"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>{{ material?.title || "Materi" }}</ion-title>
+    <ion-buttons slot="end" *ngIf="safePdfUrl">
+      <ion-button (click)="openFullscreen()"><ion-icon name="expand-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="!safePdfUrl">
+  <div *ngIf="isLoading" class="loading">Memuat...</div>
+
+  <div class="pdf-fullscreen" *ngIf="safePdfUrl">
+    <iframe id="pdfFrame" [src]="safePdfUrl" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <div class="padded" *ngIf="!isLoading && material && !safePdfUrl">
+    <div class="mat-head">
+      <ion-icon [name]="material.type === 'video' ? 'videocam-outline' : 'document-text-outline'"></ion-icon>
+      <h1>{{ material.title }}</h1>
+    </div>
+    <div class="video-wrap" *ngIf="material.type === 'video' && safeVideoUrl">
+      <iframe [src]="safeVideoUrl" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="modul-text" *ngIf="material.type === 'module'">{{ material.content }}</div>
+  </div>
+
+  <div *ngIf="!isLoading && !material" class="loading">Materi tidak ditemukan.</div>
+</ion-content>

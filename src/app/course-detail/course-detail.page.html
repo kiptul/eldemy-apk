@@ -1,0 +1,47 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-button (click)="back()"><ion-icon name="chevron-back-outline"></ion-icon></ion-button></ion-buttons>
+    <ion-title>Detail Mapel</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="loading">Memuat...</div>
+
+  <div *ngIf="!isLoading && course">
+    <div class="mapel-head">
+      <h1>{{ course.mapel?.nama || course.title }}</h1>
+      <div class="meta">
+        <span class="kelas">{{ course.kelas?.nama }}</span>
+        <span class="guru"><ion-icon name="person-outline"></ion-icon> {{ course.guru?.name }}</span>
+      </div>
+      <p class="desc" *ngIf="course.description">{{ course.description }}</p>
+    </div>
+
+    <div class="section">
+      <h2>Materi Pembelajaran</h2>
+      <div class="item-list">
+        <div class="item" *ngFor="let m of materiList" (click)="bukaMateri(m)">
+          <ion-icon [name]="m.type === 'video' ? 'videocam-outline' : 'document-text-outline'" class="item-icon"></ion-icon>
+          <div class="item-info"><h3>{{ m.title }}</h3><p *ngIf="m.duration"><ion-icon name="time-outline"></ion-icon> {{ m.duration }}</p></div>
+        </div>
+        <div class="empty" *ngIf="materiList.length === 0">Belum ada materi.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Tugas &amp; Penilaian</h2>
+      <div class="item-list">
+        <div class="item tugas" *ngFor="let t of tugasList" (click)="bukaTugas(t)">
+          <ion-icon name="clipboard-outline" class="item-icon"></ion-icon>
+          <div class="item-info"><h3>{{ t.judul }}</h3><p *ngIf="t.tenggat"><ion-icon name="calendar-outline"></ion-icon> Tenggat: {{ t.tenggat | date:'d MMM y, HH:mm' }}</p></div>
+        </div>
+        <div class="item kuis" *ngFor="let k of kuisList" (click)="bukaKuis(k)">
+          <ion-icon name="help-circle-outline" class="item-icon"></ion-icon>
+          <div class="item-info"><h3>{{ k.title }}</h3><p>Kuis</p></div>
+        </div>
+        <div class="empty" *ngIf="tugasList.length === 0 &amp;&amp; kuisList.length === 0">Belum ada tugas atau kuis.</div>
+      </div>
+    </div>
+  </div>
+</ion-content>

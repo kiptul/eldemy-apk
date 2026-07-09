@@ -1,0 +1,92 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="loadBeranda($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="beranda-header">
+    <p class="greeting">{{ greeting }},</p>
+    <h1 class="nama">{{ nama }} &#128075;</h1>
+    <div class="kelas-badge" *ngIf="user?.kelas">Kelas {{ user.kelas.nama }}</div>
+  </div>
+
+  <!-- Akun umum (marketplace) -->
+  <div *ngIf="!loading && isUmum" class="all-done">
+    <div class="emoji">&#128075;</div>
+    <h3>Selamat datang di Eldemy!</h3>
+    <p>Jelajah kursus segera hadir di aplikasi ini. Sementara itu, kamu bisa mengatur akunmu lewat tab <b>Profil</b>.</p>
+  </div>
+
+  <!-- Skeleton saat loading -->
+  <div *ngIf="loading && !isUmum" class="skeletons">
+    <div class="stats-row">
+      <ion-skeleton-text animated class="skel-stat" *ngFor="let s of [1,2,3]"></ion-skeleton-text>
+    </div>
+    <ion-skeleton-text animated class="skel-card" *ngFor="let s of [1,2,3]"></ion-skeleton-text>
+  </div>
+
+  <div *ngIf="!loading && error" class="empty-state">
+    <div class="logo-eldemy">Eldemy</div>
+    <p>Gagal memuat beranda.</p>
+    <ion-button fill="outline" size="small" class="btn-pink" (click)="loadBeranda()">Coba lagi</ion-button>
+  </div>
+
+  <ng-container *ngIf="!loading && !error && data">
+    <!-- Statistik ringkas -->
+    <div class="stats-row">
+      <div class="stat-card" (click)="keMapelku()">
+        <div class="stat-icon icon-pink"><ion-icon name="book"></ion-icon></div>
+        <div class="stat-num">{{ data.jumlah_mapel }}</div>
+        <div class="stat-label">Mapel</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-orange"><ion-icon name="document-text"></ion-icon></div>
+        <div class="stat-num">{{ data.tugas_belum }}</div>
+        <div class="stat-label">Tugas belum</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-teal"><ion-icon name="help-circle"></ion-icon></div>
+        <div class="stat-num">{{ data.kuis_belum }}</div>
+        <div class="stat-label">Kuis belum</div>
+      </div>
+    </div>
+
+    <!-- Semua beres -->
+    <div *ngIf="semuaBeres" class="all-done">
+      <div class="emoji">&#127881;</div>
+      <h3>Semua beres!</h3>
+      <p>Tidak ada tugas atau kuis yang menunggu. Buka <b (click)="keMapelku()">Mapelku</b> untuk lanjut belajar.</p>
+    </div>
+
+    <!-- Tugas terdekat -->
+    <ng-container *ngIf="data.tugas?.length">
+      <div class="section-title">
+        <h2>Tugas terdekat</h2>
+        <span class="count-badge" *ngIf="data.tugas_belum > data.tugas.length">{{ data.tugas_belum }} total</span>
+      </div>
+      <div class="item-card" *ngFor="let t of data.tugas" (click)="bukaTugas(t)">
+        <div class="item-icon icon-orange"><ion-icon name="document-text"></ion-icon></div>
+        <div class="item-body">
+          <div class="item-mapel">{{ t.mapel }}</div>
+          <div class="item-judul">{{ t.judul }}</div>
+        </div>
+        <div class="item-chip" [ngClass]="deadlineClass(t)">{{ deadlineLabel(t) }}</div>
+      </div>
+    </ng-container>
+
+    <!-- Kuis belum dikerjakan -->
+    <ng-container *ngIf="data.kuis?.length">
+      <div class="section-title">
+        <h2>Kuis untukmu</h2>
+        <span class="count-badge" *ngIf="data.kuis_belum > data.kuis.length">{{ data.kuis_belum }} total</span>
+      </div>
+      <div class="item-card" *ngFor="let k of data.kuis" (click)="bukaKuis(k)">
+        <div class="item-icon icon-teal"><ion-icon name="help-circle"></ion-icon></div>
+        <div class="item-body">
+          <div class="item-mapel">{{ k.mapel }}</div>
+          <div class="item-judul">{{ k.title }}</div>
+        </div>
+        <div class="item-chip chip-muted">{{ k.total_questions }} soal</div>
+      </div>
+    </ng-container>
+  </ng-container>
+</ion-content>

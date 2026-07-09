@@ -1,0 +1,88 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-button (click)="back()"><ion-icon name="chevron-back-outline"></ion-icon></ion-button></ion-buttons>
+    <ion-title>Tugas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="loading">Memuat...</div>
+
+  <div *ngIf="!isLoading && tugas">
+    <div class="tugas-head">
+      <h1>{{ tugas.judul }}</h1>
+      <p class="tenggat" *ngIf="tugas.tenggat"><ion-icon name="calendar-outline"></ion-icon> Tenggat: {{ tugas.tenggat | date:'d MMM y, HH:mm' }}</p>
+      <p class="desc" *ngIf="tugas.deskripsi">{{ tugas.deskripsi }}</p>
+    </div>
+
+    <!-- JADWAL PENGUMPULAN -->
+    <div class="window-banner" [ngClass]="windowStatus" *ngIf="tugas.buka_pengumpulan || tugas.tutup_pengumpulan">
+      <ng-container [ngSwitch]="windowStatus">
+        <span *ngSwitchCase="'belum'"><ion-icon name="time-outline"></ion-icon> Dibuka {{ tugas.buka_pengumpulan | date:'d MMM y, HH:mm' }}</span>
+        <span *ngSwitchCase="'tutup'"><ion-icon name="time-outline"></ion-icon> Ditutup {{ tugas.tutup_pengumpulan | date:'d MMM y, HH:mm' }}</span>
+        <span *ngSwitchDefault><ion-icon name="time-outline"></ion-icon> Dibuka &middot; tutup {{ tugas.tutup_pengumpulan | date:'d MMM y, HH:mm' }}</span>
+      </ng-container>
+    </div>
+
+    <!-- SUDAH DIKUMPUL -->
+    <div class="submitted" *ngIf="!formMode">
+      <div class="status-row">
+        <span class="badge" [class.terlambat]="pengumpulan.status === 'Terlambat'" [class.dinilai]="pengumpulan.nilai != null">
+          {{ pengumpulan.nilai != null ? "Dinilai" : pengumpulan.status }}
+        </span>
+        <span class="nilai" *ngIf="pengumpulan.nilai != null">Nilai: {{ pengumpulan.nilai }}</span>
+      </div>
+      <div class="feedback" *ngIf="pengumpulan.feedback"><strong>Feedback guru:</strong> {{ pengumpulan.feedback }}</div>
+
+      <h3>Jawabanmu</h3>
+      <div class="jwb teks" *ngIf="pengumpulan.konten_teks">{{ pengumpulan.konten_teks }}</div>
+      <a class="jwb link" *ngIf="pengumpulan.link" [href]="pengumpulan.link" target="_blank"><ion-icon name="link-outline"></ion-icon> {{ pengumpulan.link }}</a>
+      <div class="jwb file" *ngIf="pengumpulan.file_path">
+        <img *ngIf="isImageFile(pengumpulan.file_path)" [src]="fileUrl(pengumpulan.file_path)" />
+        <a *ngIf="!isImageFile(pengumpulan.file_path)" [href]="fileUrl(pengumpulan.file_path)" target="_blank"><ion-icon name="document-text-outline"></ion-icon> Lihat file (PDF)</a>
+      </div>
+      <p class="submitted-at"><ion-icon name="time-outline"></ion-icon> Dikumpulkan {{ pengumpulan.submitted_at | date:'d MMM y, HH:mm' }}</p>
+
+      <button class="btn-edit" *ngIf="canEdit" (click)="editJawaban()"><ion-icon name="create-outline"></ion-icon> Edit Jawaban</button>
+      <p class="locked" *ngIf="!canEdit">🔒 Sudah dinilai guru — jawaban tidak bisa diubah.</p>
+    </div>
+
+    <!-- FORM (belum kumpul / edit) -->
+    <div class="form" *ngIf="formMode">
+      <h2>{{ pengumpulan ? "Edit Jawaban" : "Kumpulkan Tugas" }}</h2>
+      <label>Jawaban Teks (opsional)</label>
+      <textarea [(ngModel)]="kontenTeks" rows="4" placeholder="Tulis jawabanmu..."></textarea>
+      <label>Link (opsional)</label>
+      <input type="url" [(ngModel)]="link" placeholder="https://..." />
+
+      <label>File PDF / Gambar (opsional)</label>
+      <div class="dropzone" [class.dragging]="isDragging" (click)="triggerFileInput()"
+           (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+        <p>Seret file ke sini, atau <b>klik untuk pilih</b></p>
+        <small>PDF atau gambar (gambar &gt;2MB otomatis dikompres)</small>
+      </div>
+      <input id="fileInput" type="file" accept=".pdf,image/*" (change)="onFileInput($event)" hidden />
+
+      <div class="preview" *ngIf="previewUrl">
+        <img [src]="previewUrl" alt="preview" />
+        <p class="preview-info">Ukuran: {{ compSizeKb }} KB<span *ngIf="compSizeKb < origSizeKb"> (dikompres dari {{ origSizeKb }} KB)</span><br><small>Pastikan masih jelas sebelum dikumpulkan.</small></p>
+        <button class="btn-clear" (click)="clearFile()"><ion-icon name="close-circle"></ion-icon> Ganti file</button>
+      </div>
+      <p class="file-name" *ngIf="fileName && !previewUrl">{{ fileName }} ({{ compSizeKb }} KB) <ion-icon name="close-circle" (click)="clearFile()"></ion-icon></p>
+
+      <button class="btn-kumpul" (click)="kumpul()" [disabled]="isSubmitting">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+        {{ isSubmitting ? "Mengirim..." : (pengumpulan ? "Simpan Perubahan" : "Kumpulkan") }}
+      </button>
+      <button class="btn-batal" *ngIf="isEditing" (click)="batalEdit()">Batal</button>
+    </div>
+
+    <!-- DI LUAR JADWAL -->
+    <div class="closed-msg" *ngIf="!pengumpulan && !bisaKumpul">
+      <ion-icon name="time-outline"></ion-icon>
+      <p *ngIf="windowStatus === 'belum'">Pengumpulan belum dibuka.<br>Silakan kembali lagi nanti.</p>
+      <p *ngIf="windowStatus === 'tutup'">Waktu pengumpulan sudah berakhir.</p>
+    </div>
+  </div>
+</ion-content>

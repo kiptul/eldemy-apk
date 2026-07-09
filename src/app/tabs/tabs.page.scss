@@ -1,0 +1,109 @@
+.custom-tab-bar {
+  --background: #ffffff;  /* Putih terang */
+  --border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+  height: auto;
+  min-height: 64px;
+  padding: 0 8px;
+  padding-bottom: 0;
+}
+
+ion-tab-button {
+  --color: rgba(0, 0, 0, 0.4);
+  --color-selected: transparent;
+  --background: transparent;
+  --background-focused: transparent;
+  --ripple-color: transparent;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  flex: 1;
+
+  &::before {
+    display: none !important;
+  }
+
+  .tab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 10px 0 6px;
+    position: relative;
+    transition: all 0.25s ease;
+
+    .icon-wrap {
+      position: relative;
+      width: 44px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      ion-icon {
+        font-size: 1.4rem;
+        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: absolute;
+      }
+
+      .icon-default {
+        opacity: 1;
+        transform: scale(1);
+        color: #000000;
+      }
+
+      .icon-active {
+        opacity: 0;
+        transform: scale(0.6);
+        color: #c92f6b;
+      }
+    }
+
+    .tab-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: rgb(0, 0, 0);
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+    }
+  }
+
+  &.tab-selected {
+    .tab-content {
+      .icon-wrap {
+        transform: translateY(-6px);
+        
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: rgba(201, 47, 107, 0.12);
+          border-radius: 14px;
+          border: 1px solid rgba(201, 47, 107, 0.25);
+        }
+
+        .icon-default {
+          opacity: 0;
+          transform: scale(0.6);
+        }
+
+        .icon-active {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .tab-label {
+        color: #c92f6b;
+        font-weight: 700;
+      }
+    }
+  }
+}

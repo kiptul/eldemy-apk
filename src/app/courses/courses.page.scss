@@ -1,0 +1,12 @@
+ion-toolbar { --background: #fff; --color: #2b2b3a; --border-width: 0; ion-title { font-family: "Outfit", sans-serif; font-weight: 800; font-size: 20px; } }
+ion-content { --background: #fdf8f0; font-family: "Inter", sans-serif; }
+.kelas-badge { display: inline-flex; align-items: center; gap: 6px; background: #fce4ec; color: #c92f6b; padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 18px; }
+.loading, .empty { text-align: center; color: #999; padding: 30px; }
+.mapel-grid { display: flex; flex-direction: column; gap: 12px; }
+.mapel-card {
+  display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 18px; padding: 15px; border: 1px solid #fce4ec; box-shadow: 0 3px 14px rgba(240,98,146,.08); transition: transform .15s;
+  &:active { transform: scale(.98); }
+  .mapel-icon { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #F06292, #c92f6b); color: #fff; display: flex; align-items: center; justify-content: center; ion-icon { font-size: 24px; } }
+  .mapel-info { flex: 1; h3 { margin: 0 0 3px; font-size: 15px; font-weight: 700; color: #2b2b3a; font-family: "Outfit", sans-serif; } p { margin: 0; font-size: 12.5px; color: #888; display: flex; align-items: center; gap: 4px; ion-icon { font-size: 14px; } } }
+  .arrow { color: #F0B0C8; font-size: 18px; }
+}
