@@ -119,7 +119,7 @@ import {
       --primary: #F06292;
       --secondary: #4DB6AC;
       --tertiary: #FFB74D;
-      --neutral: #F5F5DC;
+      --neutral: #fdf8f0;
       --dark: #2D3748;
     }
 
