@@ -1,8 +1,10 @@
-import { Component, inject } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { IonicModule } from "@ionic/angular";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../environments/environment";
+import { addIcons } from "ionicons";
+import { documentTextOutline } from "ionicons/icons";
 
 @Component({
   selector: "app-history",
@@ -14,6 +16,11 @@ import { environment } from "../../environments/environment";
       <div *ngIf="isLoading" class="loading">Memuat...</div>
 
       <div *ngIf="!isLoading">
+        <button class="btn-rapor" (click)="unduhRapor()" [disabled]="isDownloading">
+          <ion-icon name="document-text-outline"></ion-icon>
+          {{ isDownloading ? 'Menyiapkan rapor...' : 'Unduh Rapor (PDF)' }}
+        </button>
+
         <div class="empty" *ngIf="kosong">Belum ada nilai.<br>Kerjakan tugas &amp; kuis dulu ya!</div>
 
         <div class="section" *ngIf="kuis.length">
@@ -39,6 +46,13 @@ import { environment } from "../../environments/environment";
     ion-toolbar { --background: #fff; --color: #2b2b3a; ion-title { font-family: 'Outfit', sans-serif; font-weight: 800; } }
     .page { --background: #fdf8f0; font-family: 'Inter', sans-serif; }
     .loading, .empty { text-align: center; color: #999; padding: 40px 20px; line-height: 1.6; }
+    .btn-rapor { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+      background: linear-gradient(135deg, #F06292, #c92f6b); color: #fff; border: 0; border-radius: 14px;
+      padding: 14px; font: inherit; font-weight: 700; font-size: 14.5px; margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(240,98,146,.35); cursor: pointer;
+      ion-icon { font-size: 18px; }
+      &:disabled { opacity: .65; }
+      &:active { transform: scale(.98); } }
     .section { margin-bottom: 24px; h2 { font-size: 16px; font-weight: 700; color: #2b2b3a; margin: 0 0 12px; font-family: 'Outfit', sans-serif; } }
     .nilai-card { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #fce4ec; border-radius: 14px; padding: 14px; margin-bottom: 10px;
       .info { flex: 1; h3 { margin: 0 0 3px; font-size: 14px; font-weight: 600; color: #2b2b3a; } p { margin: 0; font-size: 12px; color: #999; } }
@@ -47,20 +61,47 @@ import { environment } from "../../environments/environment";
     }
   `]
 })
-export class HistoryPage {
+export class HistoryPage implements OnInit {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
   tugas: any[] = [];
   kuis: any[] = [];
   isLoading = true;
+  isDownloading = false;
+
+  constructor() {
+    addIcons({ documentTextOutline });
+  }
 
   private headers() {
     const t = localStorage.getItem("token") || "";
     return { headers: new HttpHeaders({ Authorization: `Bearer ${t}`, Accept: "application/json" }) };
   }
 
-  ionViewWillEnter() { this.load(); }
+  ngOnInit() { this.load(); }
+
+  ionViewWillEnter() { if (!this.isLoading) this.load(); }
+
+  unduhRapor() {
+    this.isDownloading = true;
+    const t = localStorage.getItem("token") || "";
+    this.http.get(`${this.apiUrl}/rapor-saya/pdf`, {
+      headers: new HttpHeaders({ Authorization: `Bearer ${t}`, Accept: "application/pdf" }),
+      responseType: "blob",
+    }).subscribe({
+      next: (blob) => {
+        this.isDownloading = false;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "rapor-saya.pdf";
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => { this.isDownloading = false; },
+    });
+  }
 
   load() {
     this.isLoading = true;
