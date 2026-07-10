@@ -54,12 +54,14 @@ export class RegisterPage {
       .subscribe({
         next: (res: any) => {
           if (res.success) {
-            alert('Pendaftaran berhasil! Silakan masuk.');
-            this.router.navigate(['/login']);
+            // API sudah mengembalikan token — langsung masuk, tak perlu login ulang
+            localStorage.setItem('token', res.token);
+            localStorage.setItem('user', JSON.stringify(res.data));
+            this.router.navigate(['/tabs/jelajah'], { replaceUrl: true });
           }
         },
         error: (err) => {
-          alert('Gagal mendaftar. Email mungkin sudah digunakan.');
+          alert(err?.error?.message || 'Gagal mendaftar. Email mungkin sudah digunakan.');
         },
       });
   }
@@ -74,7 +76,8 @@ export class RegisterPage {
         next: (res: any) => {
           if (res.success) {
             localStorage.setItem('token', res.access_token);
-            this.router.navigate(['/tabs/home'], { replaceUrl: true });
+            localStorage.setItem('user', JSON.stringify(res.user));
+            this.router.navigate(['/tabs/jelajah'], { replaceUrl: true });
           }
         },
         error: (err) => {

@@ -116,9 +116,10 @@ ion-content {
 /* ---- Get Started Button ---- */
 .btn-get-started {
   width: 100%;
-  background-color: #000000;
+  background: linear-gradient(135deg, #F06292, #c92f6b);
+  box-shadow: 0 6px 18px rgba(240, 98, 146, 0.4);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: none;
   padding: 16px;
   border-radius: 30px;
   font-size: 1.05rem;
@@ -134,7 +135,7 @@ ion-content {
 
   &:active {
     transform: scale(0.98);
-    background: #1a1a1a;
+    background: linear-gradient(135deg, #d95681, #b02a5f);
   }
 }
 

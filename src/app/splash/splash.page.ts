@@ -41,8 +41,11 @@ export class SplashPage implements OnInit {
         // Baru saja logout → arahkan ke halaman login
         this.router.navigateByUrl('/login', { replaceUrl: true });
       } else if (token) {
-        // Sudah login → langsung ke dashboard
-        this.router.navigateByUrl('/tabs/home', { replaceUrl: true });
+        // Sudah login → siswa ke beranda, pengguna umum ke jelajah
+        const u = localStorage.getItem('user');
+        const role = u ? JSON.parse(u)?.role : null;
+        const target = role === 'siswa' ? '/tabs/home' : '/tabs/jelajah';
+        this.router.navigateByUrl(target, { replaceUrl: true });
       } else {
         // Belum login → halaman Welcome (Get Started)
         this.router.navigateByUrl('/welcome', { replaceUrl: true });

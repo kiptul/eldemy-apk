@@ -5,7 +5,7 @@ import { IonicModule, ToastController } from "@ionic/angular";
 import { Router } from "@angular/router";
 import { ApiService } from "../services/api.service";
 import { addIcons } from "ionicons";
-import { keyOutline, logOutOutline, schoolOutline, idCardOutline } from "ionicons/icons";
+import { keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline } from "ionicons/icons";
 
 @Component({
   selector: "app-profile",
@@ -15,11 +15,11 @@ import { keyOutline, logOutOutline, schoolOutline, idCardOutline } from "ionicon
     <ion-content class="page">
       <div class="header">
         <div class="avatar">{{ inisial }}</div>
-        <h2>{{ user?.name || 'Siswa' }}</h2>
-        <span class="role">Siswa</span>
+        <h2>{{ user?.name || 'Pengguna' }}</h2>
+        <span class="role">{{ roleLabel }}</span>
       </div>
 
-      <div class="info-card">
+      <div class="info-card" *ngIf="isSiswa">
         <div class="info-row">
           <ion-icon name="id-card-outline"></ion-icon>
           <div><label>NIS</label><p>{{ user?.nis || '-' }}</p></div>
@@ -27,6 +27,13 @@ import { keyOutline, logOutOutline, schoolOutline, idCardOutline } from "ionicon
         <div class="info-row">
           <ion-icon name="school-outline"></ion-icon>
           <div><label>Kelas</label><p>{{ user?.kelas?.nama || '-' }}<span *ngIf="user?.kelas?.jurusan"> &middot; {{ user?.kelas?.jurusan?.nama }}</span></p></div>
+        </div>
+      </div>
+
+      <div class="info-card" *ngIf="!isSiswa">
+        <div class="info-row">
+          <ion-icon name="mail-outline"></ion-icon>
+          <div><label>Email</label><p>{{ user?.email || '-' }}</p></div>
         </div>
       </div>
 
@@ -90,12 +97,25 @@ export class ProfilePage {
   isSaving = false;
 
   constructor() {
-    addIcons({ keyOutline, logOutOutline, schoolOutline, idCardOutline });
+    addIcons({ keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline });
     const u = localStorage.getItem("user");
     if (u) this.user = JSON.parse(u);
   }
 
-  get inisial() { return (this.user?.name || "S").charAt(0).toUpperCase(); }
+  get inisial() { return (this.user?.name || "P").charAt(0).toUpperCase(); }
+
+  get isSiswa() { return this.user?.role === "siswa"; }
+
+  get roleLabel(): string {
+    const labels: Record<string, string> = {
+      siswa: "Siswa",
+      student: "Pengguna",
+      instructor: "Instruktur",
+      guru: "Guru",
+      admin: "Admin",
+    };
+    return labels[this.user?.role] || "Pengguna";
+  }
 
   async toast(msg: string, color = "success") {
     const t = await this.toastCtrl.create({ message: msg, duration: 2000, color, position: "top" });

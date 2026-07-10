@@ -48,9 +48,13 @@ export class KursuskuPage {
   toastVisible = false;
   private toastTimer: any = null;
 
-  ionViewWillEnter() {
+  ngOnInit() {
     this.loadHistory();
     this.loadUser();
+  }
+
+  ionViewWillEnter() {
+    if (!this.isLoading) this.loadHistory();
   }
 
   loadUser() {

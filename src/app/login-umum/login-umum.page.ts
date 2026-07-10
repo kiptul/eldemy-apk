@@ -86,10 +86,11 @@ import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, schoolOutlin
       .eye { color: #999; cursor: pointer; }
     }
     .btn-masuk {
-      width: 100%; background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.08);
+      width: 100%; background: linear-gradient(135deg, #F06292, #c92f6b); color: #fff; border: none;
+      box-shadow: 0 6px 18px rgba(240,98,146,0.4);
       padding: 15px; border-radius: 30px; font-size: 1rem; font-weight: 700; font-family: 'Inter', sans-serif;
       display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; margin-top: 4px;
-      &:active { transform: scale(0.98); background: #1a1a1a; }
+      &:active { transform: scale(0.98); background: linear-gradient(135deg, #d95681, #b02a5f); }
       &:disabled { opacity: .6; }
       .arrow { font-weight: 400; }
     }
