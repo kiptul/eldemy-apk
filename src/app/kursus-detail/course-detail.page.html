@@ -1,0 +1,221 @@
+<ion-content class="course-detail-content">
+  <app-header [showBackButton]="true" [transparent]="course && hasPurchased"></app-header>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="!course">
+    <div class="spinner-wrapper">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <p>Memuat detail kursus...</p>
+  </div>
+
+  <div *ngIf="course">
+    <div class="content-wrapper preview-mode" *ngIf="!hasPurchased">
+    <div class="course-thumbnail">
+      <div class="img-wrapper" [style.background]="'url(' + (course.thumbnail || 'assets/placeholder.png') + ') center/cover no-repeat'"></div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag" style="background: rgba(0,0,0,0.05); color: #555; font-weight: 800;">{{ course.skill_level || 'UMUM' }}</span>
+      <span class="tag bg-cyan" *ngIf="(course.skill_level === 'UMUM' || !course.skill_level) && course.category">{{ course.category | uppercase }}</span>
+      <span class="tag bg-orange" *ngIf="course.purchases_count > 0">TERLARIS</span>
+    </div>
+
+    <h1 class="course-title">{{ course.title }}</h1>
+
+    <div class="stats-row">
+      <div class="students"><ion-icon name="people-outline"></ion-icon> {{ course.purchases_count }} Siswa Terdaftar</div>
+      <div class="divider"></div>
+      <div class="materials-count"><ion-icon name="book-outline"></ion-icon> {{ course.materials.length }} Materi</div>
+      <div class="divider" *ngIf="totalDuration"></div>
+      <div class="duration" *ngIf="totalDuration"><ion-icon name="time-outline"></ion-icon> {{ totalDuration }}</div>
+    </div>
+
+    <div class="section-block">
+      <h2>Tentang kursus ini</h2>
+      <p class="description">{{ course.description }}</p>
+    </div>
+
+    <div class="instructor-card" *ngIf="course.instructor">
+      <h2 class="instructor-heading">Instruktur</h2>
+      <div class="ins-profile">
+        <div class="ins-avatar">
+          <img [src]="course.instructor.avatar_url || 'https://ui-avatars.com/api/?name='+course.instructor.name+'&background=random'" />
+        </div>
+        <div class="ins-info">
+          <h3>{{ course.instructor.name }}</h3>
+          <p class="ins-title">Instruktur di Eldemy</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="curriculum-section">
+      <div class="cur-header">
+        <h2>Kurikulum</h2>
+        <div class="cur-stats">
+           <span>{{ course.materials.length }} Bagian</span>
+           <span *ngIf="totalDuration">{{ totalDuration }}</span>
+        </div>
+      </div>
+
+      <div class="curriculum-list">
+        <div class="cur-item" *ngFor="let material of course.materials">
+          <div class="type-indicator" [ngClass]="material.type"></div>
+          <div class="cur-icon-circle" [ngClass]="material.type">
+            <ion-icon name="document-text" *ngIf="material.type === 'module'"></ion-icon>
+            <ion-icon name="videocam" *ngIf="material.type === 'video'"></ion-icon>
+            <ion-icon name="help-circle" *ngIf="material.type === 'quiz'"></ion-icon>
+          </div>
+          <div class="cur-details">
+            <h4>{{ material.title }}</h4>
+            <p>{{ material.type === 'video' ? 'Video Materi' : material.type === 'module' ? 'Modul Bacaan' : 'Kuis Evaluasi' }}</p>
+          </div>
+          <ion-icon name="lock-closed-outline" class="lock-icon"></ion-icon>
+        </div>
+        
+        <div class="empty-state" *ngIf="course.materials.length === 0">
+           Belum ada materi pembelajaran untuk kursus ini.
+        </div>
+      </div>
+
+      <div class="view-all-btn" *ngIf="course.materials.length > 0">
+        Lihat Semua {{ course.materials.length }} Materi
+      </div>
+    </div>
+    
+    <div style="height: 120px;"></div>
+  </div>
+
+
+  <div class="learning-mode" *ngIf="hasPurchased">
+    <div class="learning-hero">
+      <div class="hero-image" [style.background-image]="'url(' + (course.thumbnail || 'assets/placeholder.png') + ')'"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badges">
+          <span class="hero-badge" style="background: rgba(255,255,255,0.2); color: white;">{{ course.skill_level || 'UMUM' }}</span>
+          <span class="hero-badge category" *ngIf="(course.skill_level === 'UMUM' || !course.skill_level) && course.category">{{ course.category | uppercase }}</span>
+          <span class="hero-badge materials">
+            <ion-icon name="book-outline"></ion-icon>
+            {{ course.materials.length }} Materi
+          </span>
+        </div>
+        <h1 class="hero-title">{{ course.title }}</h1>
+        <div class="hero-instructor" *ngIf="course.instructor">
+          <img [src]="course.instructor.avatar_url || 'https://ui-avatars.com/api/?name='+course.instructor.name+'&background=random'" alt="instructor" />
+          <span>{{ course.instructor.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-overview-card">
+      <div class="progress-ring-wrapper">
+        <svg class="progress-ring" width="72" height="72" viewBox="0 0 72 72">
+          <circle class="ring-bg" cx="36" cy="36" r="30" fill="none" stroke="#f0f0f0" stroke-width="6"/>
+          <circle class="ring-fill" cx="36" cy="36" r="30" fill="none" stroke="url(#progressGrad)" stroke-width="6"
+                  stroke-linecap="round"
+                  [style.stroke-dasharray]="'188.5'"
+                  [style.stroke-dashoffset]="188.5 - (188.5 * totalProgress / 100)"
+                  transform="rotate(-90 36 36)"/>
+          <defs>
+            <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00bfa5"/>
+              <stop offset="100%" stop-color="#00897b"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="ring-text">{{ totalProgress }}%</span>
+      </div>
+      <div class="progress-info">
+        <h3>Progres Belajar</h3>
+        <p>{{ completedMaterialIds.length }} dari {{ course.materials.length }} materi selesai</p>
+        <div class="progress-bar-mini">
+          <div class="bar-fill" [style.width.%]="totalProgress"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="learning-description-section">
+      <p class="desc-text">{{ course.description }}</p>
+    </div>
+
+    <div class="learning-curriculum-section">
+      <div class="section-header">
+        <h2>Kurikulum Kursus</h2>
+        <div class="section-badge">{{ course.materials.length }} Bab</div>
+      </div>
+
+      <div class="curriculum-timeline">
+        <div class="timeline-item" *ngFor="let material of course.materials; let i = index; let last = last"
+             [ngClass]="{'active': !material.isLocked && !material.isCompleted, 'locked': material.isLocked, 'completed': material.isCompleted}"
+             (click)="goToMaterial(material)">
+
+          <div class="timeline-connector" *ngIf="!last">
+            <div class="connector-line" [ngClass]="{'filled': material.isCompleted}"></div>
+          </div>
+
+          <div class="timeline-node">
+            <div class="node-circle">
+              <ion-icon name="checkmark" *ngIf="material.isCompleted"></ion-icon>
+              <ion-icon name="play" *ngIf="!material.isLocked && !material.isCompleted"></ion-icon>
+              <ion-icon name="lock-closed-outline" *ngIf="material.isLocked"></ion-icon>
+            </div>
+          </div>
+
+          <div class="timeline-card">
+            <div class="card-type-indicator" [ngClass]="material.type"></div>
+            <div class="card-body">
+              <div class="card-top">
+                <span class="type-badge" [ngClass]="material.type">
+                  <ion-icon name="videocam" *ngIf="material.type === 'video'"></ion-icon>
+                  <ion-icon name="document-text" *ngIf="material.type === 'module'"></ion-icon>
+                  <ion-icon name="help-circle" *ngIf="material.type === 'quiz'"></ion-icon>
+                  {{ material.type === 'video' ? 'Video' : material.type === 'module' ? 'Modul' : 'Kuis' }}
+                </span>
+                <span class="card-duration" *ngIf="material.duration">{{ material.duration }}</span>
+              </div>
+              <h4 class="card-title">{{ (i+1).toString().padStart(2, '0') }}. {{ material.title }}</h4>
+              <p class="card-status">
+                <span *ngIf="material.isCompleted" class="status-done">
+                  <ion-icon name="checkmark-circle"></ion-icon> Selesai
+                </span>
+                <span *ngIf="!material.isLocked && !material.isCompleted" class="status-open">
+                  Bisa Diakses
+                </span>
+                <span *ngIf="material.isLocked" class="status-locked">
+                  Terkunci
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="course.materials.length === 0">
+        Belum ada materi pembelajaran untuk kursus ini.
+      </div>
+    </div>
+
+    <div style="height: 40px;"></div>
+  </div>
+  </div>
+</ion-content>
+
+<ion-footer class="custom-sticky-footer ion-no-border" *ngIf="course && !hasPurchased" mode="md">
+  <div class="footer-wrap">
+    <div class="price-col">
+      <span class="label"><ion-icon name="shield-checkmark" color="success" style="vertical-align: text-bottom;"></ion-icon> PEMBAYARAN AMAN</span>
+      <span class="price" *ngIf="!isFree">Rp {{ course.base_price | number }}</span>
+      <span class="price free" *ngIf="isFree">Gratis</span>
+    </div>
+    <div class="action-col">
+      <button class="buy-btn pulse-glow" (click)="doPurchase()">
+        {{ isFree ? 'Mulai Belajar Gratis' : 'Beli Sekarang' }}
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </button>
+    </div>
+  </div>
+</ion-footer>
+
+<!-- Custom Toast (replaces broken ToastController in WebView) -->
+<div class="custom-toast" [ngClass]="toastType" *ngIf="toastVisible">{{ toastMessage }}</div>

@@ -1,18 +1,36 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom" class="custom-tab-bar">
-    <ion-tab-button tab="home" href="/tabs/home">
+  <ion-tab-bar slot="bottom" class="custom-tab-bar" *ngIf="showTabBar">
+    <!-- Tab siswa -->
+    <ion-tab-button tab="home" href="/tabs/home" *ngIf="isSiswa">
       <div class="tab-content">
         <ion-icon name="home-outline"></ion-icon>
         <span class="tab-label">Beranda</span>
       </div>
     </ion-tab-button>
-    <ion-tab-button tab="courses" href="/tabs/courses">
+    <ion-tab-button tab="courses" href="/tabs/courses" *ngIf="isSiswa">
       <div class="tab-content">
         <ion-icon name="book-outline"></ion-icon>
         <span class="tab-label">Mapelku</span>
       </div>
     </ion-tab-button>
-    <ion-tab-button tab="history" href="/tabs/history">
+
+    <!-- Jelajah: semua role -->
+    <ion-tab-button tab="jelajah" href="/tabs/jelajah">
+      <div class="tab-content">
+        <ion-icon name="compass-outline"></ion-icon>
+        <span class="tab-label">Jelajah</span>
+      </div>
+    </ion-tab-button>
+
+    <!-- Tab umum -->
+    <ion-tab-button tab="kursusku" href="/tabs/kursusku" *ngIf="!isSiswa">
+      <div class="tab-content">
+        <ion-icon name="library-outline"></ion-icon>
+        <span class="tab-label">Kursusku</span>
+      </div>
+    </ion-tab-button>
+
+    <ion-tab-button tab="history" href="/tabs/history" *ngIf="isSiswa">
       <div class="tab-content">
         <ion-icon name="time-outline"></ion-icon>
         <span class="tab-label">Nilai</span>

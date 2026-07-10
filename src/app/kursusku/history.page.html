@@ -1,0 +1,200 @@
+<ion-content class="history-page">
+  <!-- Header App (shared component) -->
+  <app-header></app-header>
+
+  <div class="page-title">
+    <h2>Riwayat Belajar</h2>
+    <p>Pantau semua aktivitas pembelajaran Anda.</p>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="stats-summary" *ngIf="!isLoading">
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-icon completed-icon">✓</div>
+        <div class="stat-info">
+          <span class="stat-number">{{ completedCourses.length }}</span>
+          <span class="stat-label">Selesai</span>
+        </div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-icon progress-icon">⏳</div>
+        <div class="stat-info">
+          <span class="stat-number">{{ inProgressCourses.length }}</span>
+          <span class="stat-label">Berjalan</span>
+        </div>
+      </div>
+    </div>
+    <div class="stat-total">
+      📚 Total {{ completedCourses.length + inProgressCourses.length }} kursus terdaftar
+    </div>
+  </div>
+
+  <!-- Segmented Control -->
+  <div class="segment-wrapper">
+    <div class="custom-segment">
+      <button class="seg-btn" [class.active]="activeTab === 'selesai'" (click)="activeTab = 'selesai'">
+        ✅ Selesai
+      </button>
+      <button class="seg-btn" [class.active]="activeTab === 'progress'" (click)="activeTab = 'progress'">
+        ⏱️ Dalam Progress
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memuat data riwayat...</p>
+  </div>
+
+  <!-- Konten Tab: SELESAI -->
+  <div class="tab-content" *ngIf="!isLoading && activeTab === 'selesai'">
+    
+    <div class="empty-state" *ngIf="completedCourses.length === 0">
+      <div class="empty-icon-wrapper">🏅</div>
+      <h3>Belum Ada Kursus Selesai</h3>
+      <p>Selesaikan kursus Anda untuk mendapatkan sertifikat kelulusan.</p>
+    </div>
+
+    <div class="course-list">
+      <div class="course-card completed" *ngFor="let item of completedCourses" (click)="goToCourseDetail(item.course.id)">
+        <div class="card-image">
+          <img [src]="item.course.thumbnail || 'assets/placeholder.png'" alt="Course Thumbnail" />
+          <div class="overlay-badge">✓ Lulus</div>
+        </div>
+        <div class="card-info">
+          <h3 style="margin-top: 0; margin-bottom: 6px;">{{ item.course.title }}</h3>
+          <div class="instructor" style="margin-bottom: 8px;">
+            <ion-icon name="person-outline"></ion-icon> {{ item.course.instructor?.name || 'Instruktur Eldemy' }}
+          </div>
+          <button class="cert-btn" (click)="openCertificate($event, item)">
+            🎖️ Lihat Sertifikat
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="!isLoading && activeTab === 'progress'">
+    
+    <div class="empty-state" *ngIf="inProgressCourses.length === 0">
+      <div class="empty-icon-wrapper">📖</div>
+      <h3>Belum Ada Kursus Berjalan</h3>
+      <p>Ayo mulai belajar kursus yang sudah Anda beli.</p>
+    </div>
+
+    <div class="course-list">
+      <div class="course-card in-progress" *ngFor="let item of inProgressCourses" (click)="goToCourseDetail(item.course.id)">
+        <div class="card-image">
+          <img [src]="item.course.thumbnail || 'assets/placeholder.png'" alt="Course Thumbnail" />
+          <div class="progress-badge">{{ item.progress || 0 }}%</div>
+        </div>
+        <div class="card-info">
+          <div class="skill-badge" *ngIf="item.course.skill_level">{{ item.course.skill_level }}</div>
+          <h3>{{ item.course.title }}</h3>
+          
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" [style.width]="(item.progress || 0) + '%'"></div>
+          </div>
+          <span class="progress-text">{{ item.progress || 0 }}% selesai</span>
+
+          <div class="last-activity" *ngIf="item.last_material_title">
+            <ion-icon name="play-circle"></ion-icon>
+            <div class="text-wrap">
+              <span class="label">Terakhir belajar:</span>
+              <span class="value">{{ item.last_material_title }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height: 100px;"></div>
+</ion-content>
+
+<!-- Custom Certificate Modal (replaces broken ion-modal in WebView) -->
+<div class="custom-fullpage-modal" *ngIf="isCertificateModalOpen">
+  <div class="modal-header">
+    <h3>Sertifikat</h3>
+    <button class="modal-close" (click)="closeCertificateModal()">✕</button>
+  </div>
+  <div class="modal-body" style="background: #f8f4e6;">
+    <!-- Badge Atas -->
+    <div class="cert-hero">
+      <div class="gold-badge">🏆</div>
+      <h2 class="mastered-title">Selamat! 🎉</h2>
+      <p class="mastered-subtitle">Anda telah berhasil menyelesaikan kursus <strong>{{ certificateCourse?.title }}</strong></p>
+    </div>
+
+    <!-- Kartu Sertifikat Custom (Zoomable) -->
+    <div class="certificate-zoom-wrapper" (click)="toggleCertZoom()">
+      <div class="certificate-paper custom-template" [class.zoomed]="isCertZoomed">
+        <div class="dynamic-content">
+          <h1 class="cert-name">{{ user?.name || 'Siswa' }}</h1>
+        </div>
+      </div>
+      <div class="zoom-hint" *ngIf="!isCertZoomed">
+        <span>Ketuk untuk zoom</span>
+      </div>
+    </div>
+
+    <!-- Info Detail -->
+    <div class="cert-details-card" *ngIf="!isCertZoomed">
+      <div class="detail-row">
+        <span class="detail-label">Kursus</span>
+        <span class="detail-value">{{ certificateCourse?.title }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Tanggal Terbit</span>
+        <span class="detail-value">{{ certificateDate }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">ID Sertifikat</span>
+        <span class="detail-value mono">{{ certificateData?.certificate_number }}</span>
+      </div>
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="cert-actions" *ngIf="!isCertZoomed">
+      <button class="btn-primary" (click)="downloadPdf()" [disabled]="isDownloading">
+        <span *ngIf="!isDownloading">📥 Download PDF</span>
+        <span *ngIf="isDownloading">⏳ Mengunduh...</span>
+      </button>
+    </div>
+
+    <div style="height: 40px;"></div>
+  </div>
+</div>
+
+<!-- Loading Overlay for Download -->
+<div class="custom-loading-overlay" *ngIf="showLoadingOverlay">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <p>{{ loadingMessage }}</p>
+  </div>
+</div>
+
+<!-- Download Success Dialog -->
+<div class="custom-dialog-overlay" *ngIf="showDownloadSuccess">
+  <div class="custom-dialog">
+    <div class="dialog-header" style="text-align: center; padding: 24px 20px 8px;">
+      <div style="font-size: 3rem; margin-bottom: 8px;">✅</div>
+      <h3 style="font-size: 1.2rem;">Download Berhasil!</h3>
+    </div>
+    <div class="dialog-body" style="text-align: center;">
+      <p style="margin: 0 0 8px;">Sertifikat sedang diunduh melalui browser. File akan tersimpan di folder <strong>Download</strong> perangkat Anda.</p>
+      <p style="margin: 0; padding: 10px; background: #f3f4f6; border-radius: 8px; font-family: monospace; font-size: 0.8rem; word-break: break-all; color: #555;">
+        📁 Download/{{ downloadedFileName }}
+      </p>
+    </div>
+    <div class="dialog-actions">
+      <button class="btn-primary" (click)="closeDownloadSuccess()">OK, Mengerti</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Toast -->
+<div class="custom-toast" [ngClass]="toastType" *ngIf="toastVisible">{{ toastMessage }}</div>

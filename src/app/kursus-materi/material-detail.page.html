@@ -1,0 +1,371 @@
+<ion-content [fullscreen]="true">
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-wrapper">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <p>Memuat materi...</p>
+  </div>
+
+  <div class="material-page" *ngIf="!isLoading && material">
+
+    <div class="top-bar">
+      <button class="nav-back" (click)="goBack()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </button>
+      <div class="nav-title-area">
+        <span class="nav-title">{{ material.title }}</span>
+        <span class="nav-subtitle">{{ course?.title || 'Eldemy Course' }}</span>
+      </div>
+      <div class="nav-info">
+        <span class="nav-step">Materi {{ currentIndex + 1 }}/{{ totalMaterials }}</span>
+      </div>
+    </div>
+
+    <div class="video-section" *ngIf="material.type === 'video'">
+      <div class="video-frame">
+        <ng-container *ngIf="isVideoMp4; else iframeVideo">
+          <video controls [src]="getVideoUrl()" controlsList="nodownload" playsinline></video>
+        </ng-container>
+        <ng-template #iframeVideo>
+          <iframe
+            [src]="safeVideoUrl"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowfullscreen
+            webkitallowfullscreen
+            mozallowfullscreen>
+          </iframe>
+        </ng-template>
+      </div>
+      
+      <div class="video-playlist" *ngIf="videos.length > 1">
+        <div class="playlist-header">
+          <h4>Playlist Video ({{ videos.length }})</h4>
+        </div>
+        <div class="playlist-scroll">
+          <div class="playlist-item" 
+               *ngFor="let vid of videos; let i = index" 
+               [class.active]="selectedVideoIndex === i"
+               (click)="selectVideo(i)">
+            <div class="play-icon-container">
+              <ion-icon [name]="selectedVideoIndex === i ? 'pause-circle' : 'play-circle'"></ion-icon>
+            </div>
+            <div class="playlist-info">
+              <p class="playlist-title">{{ vid.title || 'Video ' + (i+1) }}</p>
+              <p class="playlist-status">{{ selectedVideoIndex === i ? 'Sedang Diputar' : 'Putar Video' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card" [class.no-video]="material.type !== 'video'">
+
+      <div class="material-info">
+        <div class="info-badges">
+          <div class="badge-type" [ngClass]="material.type">
+            <ion-icon *ngIf="material.type === 'video'" name="videocam-outline"></ion-icon>
+            <ion-icon *ngIf="material.type === 'module'" name="book-outline"></ion-icon>
+            <ion-icon *ngIf="material.type === 'quiz'" name="help-circle-outline"></ion-icon>
+            {{ material.type === 'video' ? 'VIDEO' : material.type === 'module' ? 'MODUL' : 'KUIS' }}
+          </div>
+          <div class="badge-duration" *ngIf="material.duration">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ material.duration }}
+          </div>
+        </div>
+
+        <h1 class="material-title">{{ material.title }}</h1>
+        <p class="material-course-name" *ngIf="course">{{ course.title }}</p>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <ng-container *ngIf="material.type === 'module'">
+        <div class="module-content" *ngIf="getDescription()">
+          <div class="rich-text" [innerHTML]="getDescription()"></div>
+        </div>
+
+        <div class="pdf-section" *ngIf="hasModules()">
+          <h4 class="section-heading" *ngIf="modules.length > 1">Daftar Modul ({{ modules.length }})</h4>
+          <div class="pdf-card" *ngFor="let mod of modules">
+            <div class="pdf-icon-wrap">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+            <div class="pdf-info">
+              <h4>{{ mod.title || 'Materi PDF' }}</h4>
+              <p>Format PDF</p>
+            </div>
+            <button class="download-btn-small" (click)="downloadSpecificPdf(mod.path)">
+              <ion-icon name="download-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="empty-content" *ngIf="!getDescription() && !hasModules()">
+          <ion-icon name="book-outline"></ion-icon>
+          <p>Konten materi belum tersedia.</p>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="material.type === 'video'">
+        <div class="module-content" *ngIf="getDescription()">
+          <div class="rich-text" [innerHTML]="getDescription()"></div>
+        </div>
+        <div class="pdf-section" *ngIf="hasModules()">
+          <h4 class="section-heading" *ngIf="modules.length > 1">Materi Pendukung ({{ modules.length }})</h4>
+          <div class="pdf-card" *ngFor="let mod of modules">
+            <div class="pdf-icon-wrap">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+            <div class="pdf-info">
+              <h4>{{ mod.title || 'Materi PDF' }}</h4>
+              <p>Materi pendukung</p>
+            </div>
+            <button class="download-btn-small" (click)="downloadSpecificPdf(mod.path)">
+              <ion-icon name="download-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="video-tips">
+          <div class="tip-card">
+            <div class="tip-icon">
+              <ion-icon name="play-circle-outline"></ion-icon>
+            </div>
+            <div>
+              <h4>Tips Belajar</h4>
+              <p>Tonton video sampai selesai, kemudian tekan tombol di bawah untuk menandai materi ini telah diselesaikan dan membuka materi selanjutnya.</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="quiz-inline-section" *ngIf="quizInfo && !quizLoading">
+        <div class="section-divider"></div>
+
+        <div class="quiz-inline-card">
+          <div class="quiz-inline-header">
+            <div class="quiz-inline-icon-wrap">
+              <ion-icon name="help-circle-outline"></ion-icon>
+            </div>
+            <div class="quiz-inline-title-area">
+              <h3>{{ quizInfo.title || 'Kuis Kurikulum' }}</h3>
+              <p>Uji pemahaman Anda sebelum melanjutkan</p>
+            </div>
+          </div>
+
+          <div class="quiz-inline-stats">
+            <div class="stat-chip">
+              <ion-icon name="help-circle-outline"></ion-icon>
+              <span>{{ quizInfo.total_questions || quizInfo.questions?.length || 0 }} Soal</span>
+            </div>
+            <div class="stat-chip" *ngIf="quizInfo.duration > 0">
+              <ion-icon name="timer-outline"></ion-icon>
+              <span>{{ quizInfo.duration }} Menit</span>
+            </div>
+            <div class="stat-chip" *ngIf="!quizInfo.duration || quizInfo.duration === 0">
+              <ion-icon name="timer-outline"></ion-icon>
+              <span>Bebas Waktu</span>
+            </div>
+            <div class="stat-chip best" *ngIf="quizInfo.best_score !== null && quizInfo.best_score !== undefined">
+              <ion-icon name="trophy-outline"></ion-icon>
+              <span>Terbaik: {{ quizInfo.best_score }}%</span>
+            </div>
+          </div>
+
+          <div class="quiz-inline-min-score" *ngIf="quizInfo.min_score > 0">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            <span>Nilai minimum kelulusan: <strong>{{ quizInfo.min_score }}%</strong></span>
+          </div>
+
+          <button class="quiz-start-btn" (click)="startQuiz()">
+            <ion-icon [name]="quizInfo.attempts && quizInfo.attempts.length > 0 ? 'reload-outline' : 'arrow-forward-outline'"></ion-icon>
+            <span>{{ quizInfo.attempts && quizInfo.attempts.length > 0 ? 'Mulai Ulang Kuis' : 'Mulai Kuis' }}</span>
+          </button>
+        </div>
+
+        <!-- Quiz History Table -->
+        <div class="quiz-history-section" *ngIf="quizInfo.attempts && quizInfo.attempts.length > 0">
+          <h4>Riwayat Pengerjaan</h4>
+          <div class="history-table">
+            <div class="history-row header">
+              <div class="h-col">Tanggal</div>
+              <div class="h-col">Nilai</div>
+              <div class="h-col">Status</div>
+            </div>
+            <div class="history-row" *ngFor="let attempt of quizInfo.attempts">
+              <div class="h-col date">{{ attempt.created_at | date:'dd MMM yyyy, HH:mm' }}</div>
+              <div class="h-col">
+                <span class="score-pill" [class.passed]="attempt.score >= quizInfo.min_score" [class.failed]="attempt.score < quizInfo.min_score">
+                  {{ attempt.score }}%
+                </span>
+              </div>
+              <div class="h-col status">
+                <span *ngIf="attempt.score >= quizInfo.min_score" class="status-text passed">Lulus</span>
+                <span *ngIf="attempt.score < quizInfo.min_score" class="status-text failed">Belum</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
+
+<!-- Sticky Footer: mark complete button -->
+<ion-footer class="sticky-footer ion-no-border" *ngIf="!isLoading && material && material.type !== 'quiz' && !isQuizActive" mode="md">
+  <div class="footer-wrap">
+    <button class="complete-btn" (click)="markComplete()" [disabled]="isCompleting">
+      <ng-container *ngIf="!isCompleting">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+        Selesaikan Materi
+      </ng-container>
+      <ion-spinner name="dots" *ngIf="isCompleting"></ion-spinner>
+    </button>
+  </div>
+</ion-footer>
+
+<div class="quiz-overlay" *ngIf="isQuizActive" [class.show-result]="showQuizResult">
+  <div class="quiz-taking" *ngIf="!showQuizResult">
+
+    <div class="quiz-header">
+      <button class="quiz-close-btn" (click)="closeQuiz()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      <div class="quiz-header-center">
+        <span class="quiz-header-title">Kuis: {{ quizTitle }}</span>
+        <span class="quiz-header-progress">{{ answeredCount }} dari {{ quizQuestions.length }} dijawab</span>
+      </div>
+      <div class="quiz-timer-badge" [class.warning]="isTimerWarning">
+        <ion-icon name="timer-outline"></ion-icon>
+        <span>{{ timerDisplay }}</span>
+      </div>
+    </div>
+
+    <div class="quiz-progress-track">
+      <div class="quiz-progress-fill" [style.width.%]="progressPercent"></div>
+      <span class="quiz-progress-label">{{ progressPercent | number:'1.0-0' }}%</span>
+    </div>
+
+    <div class="quiz-question-nav">
+      <button
+        *ngFor="let q of quizQuestions; let i = index"
+        class="q-num-btn"
+        [class.active]="i === currentQuestionIndex"
+        [class.answered-correct]="answerStatus[i] === 'correct'"
+        [class.answered-wrong]="answerStatus[i] === 'wrong'"
+        (click)="goToQuestion(i)">
+        {{ i + 1 }}
+      </button>
+    </div>
+
+    <div class="quiz-question-area">
+      <div class="question-card" *ngIf="quizQuestions[currentQuestionIndex] as q">
+        <div class="question-number-badge">Soal {{ currentQuestionIndex + 1 }}</div>
+        <h2 class="question-text">{{ q.question }}</h2>
+
+        <div class="options-list">
+          <button
+            *ngFor="let opt of q.options; let oi = index"
+            class="option-btn"
+            [class.correct]="isCorrectOption(currentQuestionIndex, oi) && answerStatus[currentQuestionIndex] !== undefined && answerStatus[currentQuestionIndex] !== null"
+            [class.wrong]="isWrongSelected(currentQuestionIndex, oi)"
+            [class.selected]="isSelected(currentQuestionIndex, oi) && !answerStatus[currentQuestionIndex]"
+            [disabled]="answerStatus[currentQuestionIndex] !== undefined && answerStatus[currentQuestionIndex] !== null"
+            (click)="selectAnswer(currentQuestionIndex, oi)">
+            <span class="option-letter">{{ ['A', 'B', 'C', 'D'][oi] }}</span>
+            <span class="option-text">{{ opt }}</span>
+            <div class="option-feedback">
+              <ion-icon name="checkmark-circle" class="fb-correct" *ngIf="isCorrectOption(currentQuestionIndex, oi) && answerStatus[currentQuestionIndex]"></ion-icon>
+              <ion-icon name="close-circle" class="fb-wrong" *ngIf="isWrongSelected(currentQuestionIndex, oi)"></ion-icon>
+            </div>
+          </button>
+        </div>
+
+        <div class="answer-feedback" *ngIf="answerStatus[currentQuestionIndex]">
+          <div class="feedback-card correct" *ngIf="answerStatus[currentQuestionIndex] === 'correct'">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Jawaban Benar! 🎉</span>
+          </div>
+          <div class="feedback-card wrong" *ngIf="answerStatus[currentQuestionIndex] === 'wrong'">
+            <ion-icon name="close-circle"></ion-icon>
+            <span>Salah. Jawaban yang benar: <strong>{{ getCorrectAnswerText(currentQuestionIndex) }}</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-result" *ngIf="showQuizResult">
+    <div class="result-content">
+
+      <div class="result-decoration">
+        <div class="deco-ring" [class.passed]="quizResultPassed" [class.failed]="!quizResultPassed"></div>
+      </div>
+
+      <!-- Score Circle -->
+      <div class="score-circle-wrapper">
+        <svg class="score-circle" viewBox="0 0 120 120">
+          <circle class="score-bg" cx="60" cy="60" r="52" />
+          <circle class="score-fill"
+                  [class.passed]="quizResultPassed"
+                  [class.failed]="!quizResultPassed"
+                  cx="60" cy="60" r="52"
+                  [style.stroke-dasharray]="'326.7'"
+                  [style.stroke-dashoffset]="326.7 - (326.7 * quizResultScore / 100)" />
+        </svg>
+        <div class="score-value">
+          <span class="score-number">{{ quizResultScore }}</span>
+          <span class="score-percent">%</span>
+        </div>
+      </div>
+
+      <div class="result-status" [class.passed]="quizResultPassed" [class.failed]="!quizResultPassed">
+        <ion-icon [name]="quizResultPassed ? 'trophy-outline' : 'refresh-outline'"></ion-icon>
+        <h2>{{ quizResultPassed ? 'Selamat! 🎉' : 'Belum Lulus' }}</h2>
+        <p>{{ quizResultMessage }}</p>
+      </div>
+
+      <div class="result-stats">
+        <div class="stat-card">
+          <div class="stat-icon correct-icon">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <span class="stat-label">Benar</span>
+          <span class="stat-value correct">{{ quizResultCorrect }}/{{ quizResultTotal }}</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon best-icon">
+            <ion-icon name="star-outline"></ion-icon>
+          </div>
+          <span class="stat-label">Nilai Terbaik</span>
+          <span class="stat-value best">{{ quizResultBestScore }}%</span>
+        </div>
+        <div class="stat-card" *ngIf="quizMinScore > 0">
+          <div class="stat-icon min-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <span class="stat-label">Minimum</span>
+          <span class="stat-value min">{{ quizMinScore }}%</span>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="retry-btn" (click)="retryQuiz()">
+          <ion-icon name="reload-outline"></ion-icon>
+          <span>Coba Lagi</span>
+        </button>
+        <button class="close-result-btn" (click)="closeQuiz()">
+          <span>Kembali ke Materi</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Custom Toast (replaces broken ToastController) -->
+<div class="custom-toast" [ngClass]="toastType" *ngIf="toastVisible">{{ toastMessage }}</div>

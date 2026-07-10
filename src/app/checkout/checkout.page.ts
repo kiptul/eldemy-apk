@@ -61,7 +61,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
         // Cek jika sudah pernah beli
         if (res.has_purchased) {
           this.showCustomToast('Anda sudah memiliki akses ke kursus ini.', 'info');
-          this.router.navigate(['/tabs/courses']);
+          this.router.navigate(['/tabs/kursus', this.courseId]);
         }
       },
       error: (err) => {
@@ -97,7 +97,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
               this.startPollingPaymentStatus();
             } else {
               this.showCustomToast(res.message || 'Registrasi kursus gratis berhasil! 🎉', 'success');
-              this.router.navigate(['/tabs/courses']);
+              this.router.navigate(['/tabs/kursus', this.courseId]);
             }
           } else {
             this.showCustomToast(res.message || 'Gagal menginisialisasi pembayaran.', 'error');
@@ -175,7 +175,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
               this.showPaymentDialog = false;
               this.cdr.detectChanges();
               this.showCustomToast('Pembayaran berhasil! 🎉', 'success');
-              this.router.navigate(['/tabs/courses']);
+              this.router.navigate(['/tabs/kursus', this.courseId]);
             });
           } else if (res.success && res.status === 'expire') {
             this.stopPolling();
@@ -219,10 +219,10 @@ export class CheckoutPage implements OnInit, OnDestroy {
           this.cdr.detectChanges();
           if (res.success && res.status === 'settlement') {
             this.showCustomToast('Pembayaran berhasil! 🎉', 'success');
-            this.router.navigate(['/tabs/courses']);
+            this.router.navigate(['/tabs/kursus', this.courseId]);
           } else if (res.status === 'pending') {
             this.showCustomToast('Pembayaran Anda sedang diproses...', 'info');
-            this.router.navigate(['/tabs/courses']);
+            this.router.navigate(['/tabs/kursus', this.courseId]);
           } else {
             this.showCustomToast('Pembayaran belum selesai. Silakan coba lagi.', 'warning');
           }

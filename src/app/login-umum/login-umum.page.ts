@@ -13,26 +13,29 @@ import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, schoolOutlin
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
   template: `
-    <ion-content class="page">
-      <div class="wrap">
-        <div class="brand">
-          <h1>Eldemy</h1>
-          <p>Belajar tanpa batas,<br>kapan pun di mana pun</p>
-        </div>
+    <ion-content [fullscreen]="true" style="--background: transparent;">
+      <div class="background-container"></div>
+      <div class="page-wrapper">
+        <div class="spacer"></div>
 
-        <div class="form-card">
+        <div class="bottom-overlay">
+          <div class="brand-section">
+            <h1 class="logo-text">Eldemy</h1>
+            <p class="tagline">Masuk untuk mulai belajar</p>
+          </div>
+
           <div class="input-group">
             <ion-icon name="mail-outline"></ion-icon>
             <input type="email" [(ngModel)]="email" placeholder="Email" autocomplete="email" />
           </div>
           <div class="input-group">
             <ion-icon name="lock-closed-outline"></ion-icon>
-            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" placeholder="Kata sandi" />
+            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" placeholder="Kata sandi" (keyup.enter)="doLogin()" />
             <ion-icon class="eye" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" (click)="showPassword = !showPassword"></ion-icon>
           </div>
 
-          <button class="btn-primary" (click)="doLogin()" [disabled]="isLoading">
-            {{ isLoading ? 'Memproses...' : 'Masuk' }}
+          <button class="btn-masuk" (click)="doLogin()" [disabled]="isLoading">
+            {{ isLoading ? 'Memproses...' : 'Masuk' }} <span class="arrow" *ngIf="!isLoading">&#8594;</span>
           </button>
 
           <div class="divider"><span>atau</span></div>
@@ -41,51 +44,81 @@ import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, schoolOutlin
             <ion-icon name="logo-google"></ion-icon> Lanjutkan dengan Google
           </button>
 
-          <p class="daftar">Belum punya akun? <b (click)="keRegister()">Daftar</b></p>
-        </div>
-
-        <div class="siswa-card" (click)="keLoginSiswa()">
-          <div class="ic"><ion-icon name="school-outline"></ion-icon></div>
-          <div class="txt">
-            <b>Siswa sekolah?</b>
-            <span>Masuk pakai NIS dari sekolahmu</span>
+          <div class="siswa-card" (click)="keLoginSiswa()">
+            <div class="ic"><ion-icon name="school-outline"></ion-icon></div>
+            <div class="txt">
+              <b>Siswa sekolah?</b>
+              <span>Masuk pakai NIS dari sekolahmu</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="arrow-ic"></ion-icon>
           </div>
-          <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+
+          <p class="daftar-link">Belum punya akun? <b (click)="keRegister()">Daftar</b></p>
         </div>
       </div>
     </ion-content>
   `,
   styles: [`
-    .page { --background: #fdf8f0; font-family: 'Inter', sans-serif; }
-    .wrap { min-height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 28px 22px; box-sizing: border-box; }
-    .brand { text-align: center; margin-bottom: 26px;
-      h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 38px; color: #F06292; margin: 0; }
-      p { color: #999; margin: 8px 0 0; line-height: 1.5; }
+    .background-container {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: url("/assets/images/backgrounds/Eldemy-welcome-bg.jpeg") no-repeat center center / cover;
+      z-index: -1;
     }
-    .form-card { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 18px rgba(0,0,0,.06); }
-    .input-group { display: flex; align-items: center; gap: 10px; border: 1px solid #fce4ec; border-radius: 12px; padding: 0 14px; margin-bottom: 12px;
+    .page-wrapper { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; }
+    .spacer { flex: 1; }
+    .bottom-overlay {
+      background: linear-gradient(to bottom, rgba(35,35,35,0.72) 0%, rgba(18,18,18,0.9) 100%);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border-top-left-radius: 36px; border-top-right-radius: 36px;
+      padding: 28px 28px 20px; display: flex; flex-direction: column;
+    }
+    .brand-section { text-align: center; margin-bottom: 20px; }
+    .logo-text { font-family: 'Outfit', 'Inter', sans-serif; font-weight: 800; font-size: 2.6rem; color: #fff; margin: 0; letter-spacing: -1.5px; }
+    .tagline { font-family: 'Inter', sans-serif; color: #d0d0d0; font-size: 0.92rem; margin-top: 4px; }
+    .input-group {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 0 16px; margin-bottom: 12px;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       ion-icon { color: #F06292; font-size: 18px; flex-shrink: 0; }
-      input { flex: 1; border: 0; outline: 0; padding: 14px 0; font-size: 14.5px; font-family: 'Inter', sans-serif; background: transparent; }
-      .eye { color: #bbb; cursor: pointer; }
+      input { flex: 1; border: 0; outline: 0; padding: 15px 0; font-size: 14.5px; font-family: 'Inter', sans-serif; background: transparent; color: #fff; }
+      input::placeholder { color: #aaa; }
+      .eye { color: #999; cursor: pointer; }
     }
-    .btn-primary { width: 100%; background: linear-gradient(135deg, #F06292, #c92f6b); color: #fff; border: 0; border-radius: 12px; padding: 14px; font-weight: 700; font-size: 15px; font-family: 'Outfit', sans-serif; box-shadow: 0 4px 14px rgba(240,98,146,.35); &:disabled { opacity: .6; } }
-    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #ccc; font-size: 12.5px;
-      &::before, &::after { content: ''; flex: 1; height: 1px; background: #f0e8dc; }
+    .btn-masuk {
+      width: 100%; background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.08);
+      padding: 15px; border-radius: 30px; font-size: 1rem; font-weight: 700; font-family: 'Inter', sans-serif;
+      display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; margin-top: 4px;
+      &:active { transform: scale(0.98); background: #1a1a1a; }
+      &:disabled { opacity: .6; }
+      .arrow { font-weight: 400; }
     }
-    .btn-google { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: #fff; border: 1.5px solid #eee; border-radius: 12px; padding: 13px; font-weight: 600; font-size: 14.5px; font-family: 'Inter', sans-serif; color: #2b2b3a;
+    .divider { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: #888; font-size: 12.5px; font-family: 'Inter', sans-serif;
+      &::before, &::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.14); }
+    }
+    .btn-google {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 30px; padding: 13px; font-weight: 600; font-size: 14.5px; font-family: 'Inter', sans-serif; color: #fff; cursor: pointer;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       ion-icon { font-size: 18px; }
+      &:active { transform: scale(0.98); }
       &:disabled { opacity: .6; }
     }
-    .daftar { text-align: center; margin: 16px 0 2px; font-size: 13.5px; color: #999;
-      b { color: #F06292; cursor: pointer; }
-    }
-    .siswa-card { display: flex; align-items: center; gap: 14px; margin-top: 18px; background: #fff; border: 1.5px dashed #F06292; border-radius: 16px; padding: 14px 16px; cursor: pointer;
-      .ic { width: 42px; height: 42px; border-radius: 12px; background: #fce4ec; display: flex; align-items: center; justify-content: center; ion-icon { color: #F06292; font-size: 21px; } }
+    .siswa-card {
+      display: flex; align-items: center; gap: 14px; margin-top: 16px;
+      background: rgba(240,98,146,0.12); border: 1.5px dashed rgba(240,98,146,0.6);
+      border-radius: 20px; padding: 13px 16px; cursor: pointer;
+      .ic { width: 40px; height: 40px; border-radius: 50%; background: rgba(240,98,146,0.2); display: flex; align-items: center; justify-content: center;
+        ion-icon { color: #F06292; font-size: 20px; } }
       .txt { flex: 1; display: flex; flex-direction: column;
-        b { font-size: 14.5px; color: #2b2b3a; font-family: 'Outfit', sans-serif; }
-        span { font-size: 12.5px; color: #999; margin-top: 2px; }
-      }
-      .arrow { color: #F06292; }
+        b { font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; }
+        span { font-size: 12px; color: #bbb; margin-top: 2px; } }
+      .arrow-ic { color: #F06292; }
+      &:active { transform: scale(0.98); }
+    }
+    .daftar-link { text-align: center; font-size: 0.85rem; font-family: 'Inter', sans-serif; color: #aaa; margin: 16px 0 2px;
+      b { color: #F06292; font-weight: 800; cursor: pointer; }
     }
   `]
 })
@@ -112,7 +145,7 @@ export class LoginUmumPage {
         if (res.success) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.data));
-          this.router.navigate(['/tabs/home'], { replaceUrl: true });
+          this.router.navigate(['/tabs/jelajah'], { replaceUrl: true });
         }
       },
       error: (err) => {
@@ -133,7 +166,7 @@ export class LoginUmumPage {
           if (res.success) {
             localStorage.setItem('token', res.access_token || res.token);
             if (res.user || res.data) localStorage.setItem('user', JSON.stringify(res.user || res.data));
-            this.router.navigate(['/tabs/home'], { replaceUrl: true });
+            this.router.navigate(['/tabs/jelajah'], { replaceUrl: true });
           }
         },
         error: () => { this.isLoading = false; alert('Login Google gagal di server.'); },

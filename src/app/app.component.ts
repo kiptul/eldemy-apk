@@ -1,16 +1,15 @@
 import { Component, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { App as CapApp } from '@capacitor/app';
 import { Router } from '@angular/router';
-import { NavController, Platform } from '@ionic/angular';
+import { IonicModule, NavController, Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonApp, IonRouterOutlet],
+  imports: [CommonModule, IonicModule],
 })
 export class AppComponent {
   private router = inject(Router);

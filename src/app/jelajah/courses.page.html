@@ -1,0 +1,114 @@
+<ion-content class="jelajah-page">
+  <app-header></app-header>
+
+  <ion-refresher slot="fixed" (ionRefresh)="loadCourses($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-body">
+    <div class="page-heading">
+      <h1>Jelajah Kursus</h1>
+      <p>Temukan kelas menarik dan tingkatkan kemampuanmu</p>
+    </div>
+
+    <div class="search-box">
+      <ion-icon name="search-outline"></ion-icon>
+      <input
+        type="text"
+        placeholder="Cari kursus, kategori, atau pengajar..."
+        [(ngModel)]="searchQuery" />
+      <ion-icon
+        class="clear-btn"
+        name="close-circle"
+        *ngIf="searchQuery"
+        (click)="clearSearch()"></ion-icon>
+    </div>
+
+    <div class="level-chips">
+      <button
+        class="chip"
+        *ngFor="let level of skillLevels"
+        [class.active]="activeSkillLevel === level"
+        (click)="setSkillLevel(level)">
+        {{ level }}
+      </button>
+    </div>
+
+    <div class="category-pills" *ngIf="categories.length > 2">
+      <button
+        class="pill"
+        *ngFor="let cat of categories"
+        [class.active]="activeCategory === cat"
+        (click)="setCategory(cat)">
+        {{ cat }}
+      </button>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div class="course-list" *ngIf="isLoading">
+      <div class="course-card skeleton" *ngFor="let i of [1,2,3]">
+        <div class="card-thumb shimmer"></div>
+        <div class="card-body">
+          <div class="line shimmer" style="width: 40%"></div>
+          <div class="line shimmer" style="width: 90%"></div>
+          <div class="line shimmer" style="width: 60%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="empty-state" *ngIf="!isLoading && hasError">
+      <div class="empty-icon error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+      </div>
+      <h3>Gagal memuat</h3>
+      <p>Periksa koneksi internetmu, lalu tarik ke bawah untuk memuat ulang.</p>
+    </div>
+
+    <!-- Kosong -->
+    <div class="empty-state" *ngIf="!isLoading && !hasError && filteredCourses.length === 0">
+      <div class="empty-icon">
+        <ion-icon name="compass-outline"></ion-icon>
+      </div>
+      <h3>Tidak ada kursus</h3>
+      <p *ngIf="searchQuery">Tidak ada hasil untuk "{{ searchQuery }}". Coba kata kunci lain.</p>
+      <p *ngIf="!searchQuery">Belum ada kursus di kategori ini. Coba pilih filter lain.</p>
+    </div>
+
+    <!-- Daftar kursus -->
+    <div class="course-list" *ngIf="!isLoading && !hasError">
+      <div
+        class="course-card"
+        *ngFor="let course of filteredCourses"
+        (click)="goToDetail(course.id)">
+        <div class="card-thumb">
+          <img
+            [src]="course.thumbnail || 'https://placehold.co/400x300/fce4ec/c92f6b?text=Eldemy'"
+            [alt]="course.title"
+            loading="lazy" />
+          <span class="level-badge">{{ course.skill_level || 'UMUM' }}</span>
+          <span class="price-badge" [class.free]="!course.base_price || course.base_price <= 0">
+            {{ formatPrice(course.base_price) }}
+          </span>
+        </div>
+        <div class="card-body">
+          <span class="category" *ngIf="course.category">{{ course.category }}</span>
+          <h3 class="title">{{ course.title }}</h3>
+          <p class="instructor" *ngIf="course.instructor?.name">{{ course.instructor.name }}</p>
+          <div class="meta-row">
+            <span class="meta" *ngIf="course.materials_count != null">
+              <ion-icon name="book-outline"></ion-icon>
+              {{ course.materials_count }} materi
+            </span>
+            <span class="meta">
+              <ion-icon name="people-outline"></ion-icon>
+              {{ course.purchases_count || 0 }} peserta
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 24px;"></div>
+  </div>
+</ion-content>
