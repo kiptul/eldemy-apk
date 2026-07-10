@@ -1,6 +1,6 @@
-import { Component, inject } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { IonicModule, NavController } from "@ionic/angular";
+import { IonicModule, NavController, ToastController } from "@ionic/angular";
 import { ActivatedRoute } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../environments/environment";
@@ -14,10 +14,11 @@ import { chevronBackOutline, trophyOutline, closeCircle, refreshOutline } from "
   standalone: true,
   imports: [IonicModule, CommonModule],
 })
-export class KuisPage {
+export class KuisPage implements OnInit {
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
   private navCtrl = inject(NavController);
+  private toastCtrl = inject(ToastController);
   private apiUrl = environment.apiUrl;
   private letters = ["A", "B", "C", "D"];
 
@@ -35,7 +36,14 @@ export class KuisPage {
     return { headers: new HttpHeaders({ Authorization: `Bearer ${t}`, Accept: "application/json", "Content-Type": "application/json" }) };
   }
 
-  ionViewWillEnter() {
+  private sudahDimuat = false;
+
+  ngOnInit() { this.masukHalaman(); }
+
+  ionViewWillEnter() { if (this.sudahDimuat) this.masukHalaman(); }
+
+  private masukHalaman() {
+    this.sudahDimuat = true;
     const id = +(this.route.snapshot.paramMap.get("id") || 0);
     if (id) this.load(id);
   }
@@ -58,7 +66,11 @@ export class KuisPage {
     const arr = this.quiz.questions.map((_: any, i: number) => this.answers[i] != null ? this.letters[this.answers[i]] : "");
     this.http.post(`${this.apiUrl}/quizzes/${this.quiz.id}/submit`, { answers: arr }, this.headers()).subscribe({
       next: (res: any) => { this.isSubmitting = false; this.result = res; this.showResult = true; },
-      error: () => { this.isSubmitting = false; alert("Gagal mengirim kuis."); },
+      error: async () => {
+        this.isSubmitting = false;
+        const t = await this.toastCtrl.create({ message: "Gagal mengirim kuis. Coba lagi.", duration: 2500, color: "danger", position: "top" });
+        t.present();
+      },
     });
   }
 

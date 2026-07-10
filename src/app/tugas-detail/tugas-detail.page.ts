@@ -1,7 +1,7 @@
-import { Component, inject } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { IonicModule, NavController } from "@ionic/angular";
+import { IonicModule, NavController, ToastController } from "@ionic/angular";
 import { ActivatedRoute } from "@angular/router";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../environments/environment";
@@ -15,10 +15,11 @@ import { chevronBackOutline, calendarOutline, cloudUploadOutline, closeCircle, c
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class TugasDetailPage {
+export class TugasDetailPage implements OnInit {
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
   private navCtrl = inject(NavController);
+  private toastCtrl = inject(ToastController);
   private apiUrl = environment.apiUrl;
 
   tugas: any = null;
@@ -43,7 +44,14 @@ export class TugasDetailPage {
     return { headers: new HttpHeaders({ Authorization: `Bearer ${t}`, Accept: "application/json" }) };
   }
 
-  ionViewWillEnter() {
+  private sudahDimuat = false;
+
+  ngOnInit() { this.masukHalaman(); }
+
+  ionViewWillEnter() { if (this.sudahDimuat) this.masukHalaman(); }
+
+  private masukHalaman() {
+    this.sudahDimuat = true;
     const id = +(this.route.snapshot.paramMap.get("id") || 0);
     if (id) this.load(id);
   }
@@ -128,8 +136,13 @@ export class TugasDetailPage {
     });
   }
 
+  private async toast(message: string, color: "success" | "danger" | "warning" = "success") {
+    const t = await this.toastCtrl.create({ message, duration: 2500, color, position: "top" });
+    t.present();
+  }
+
   kumpul() {
-    if (!this.kontenTeks && !this.link && !this.selectedFile) { alert("Isi teks, link, atau pilih file dulu."); return; }
+    if (!this.kontenTeks && !this.link && !this.selectedFile) { this.toast("Isi teks, link, atau pilih file dulu.", "warning"); return; }
     this.isSubmitting = true;
     const fd = new FormData();
     if (this.kontenTeks) fd.append("konten_teks", this.kontenTeks);
@@ -138,8 +151,8 @@ export class TugasDetailPage {
     if (lnk) fd.append("link", lnk);
     if (this.selectedFile) fd.append("file", this.selectedFile);
     this.http.post(`${this.apiUrl}/tugas/${this.tugas.id}/kumpul`, fd, this.headers()).subscribe({
-      next: (res: any) => { this.isSubmitting = false; this.pengumpulan = res.data; alert("Tugas berhasil dikumpulkan!"); this.navCtrl.back(); },
-      error: (err: any) => { this.isSubmitting = false; alert(err?.error?.message || "Gagal mengumpulkan tugas."); },
+      next: (res: any) => { this.isSubmitting = false; this.pengumpulan = res.data; this.toast("Tugas berhasil dikumpulkan!"); this.navCtrl.back(); },
+      error: (err: any) => { this.isSubmitting = false; this.toast(err?.error?.message || "Gagal mengumpulkan tugas.", "danger"); },
     });
   }
 

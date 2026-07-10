@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { IonicModule } from "@ionic/angular";
 import { Router } from "@angular/router";
@@ -13,14 +13,15 @@ import { bookOutline, personOutline, chevronForwardOutline } from "ionicons/icon
   templateUrl: "./courses.page.html",
   styleUrls: ["./courses.page.scss"],
 })
-export class CoursesPage {
+export class CoursesPage implements OnInit {
   kelas = "";
   mapelList: any[] = [];
   isLoading = true;
   constructor(private apiService: ApiService, private router: Router) {
     addIcons({ bookOutline, personOutline, chevronForwardOutline });
   }
-  ionViewWillEnter() { this.loadMapel(); }
+  ngOnInit() { this.loadMapel(); }
+  ionViewWillEnter() { if (!this.isLoading) this.loadMapel(); }
   loadMapel() {
     this.isLoading = true;
     this.apiService.getMapelSaya().subscribe({

@@ -76,7 +76,9 @@
           </svg>
         </div>
 
-        <button class="btn-register" (click)="doRegister()">Daftar</button>
+        <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+        <button class="btn-register" (click)="doRegister()" [disabled]="isLoading">{{ isLoading ? 'Memproses...' : 'Daftar' }}</button>
       </div>
 
       <div class="divider">

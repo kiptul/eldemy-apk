@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 import { IonicModule, NavController } from "@ionic/angular";
 import { addIcons } from "ionicons";
 import { book, documentText, helpCircle } from "ionicons/icons";
@@ -12,24 +13,35 @@ import { ApiService } from "../services/api.service";
   standalone: true,
   imports: [IonicModule, CommonModule],
 })
-export class HomePage {
+export class HomePage implements OnInit {
   user: any = null;
   data: any = null;
   loading = true;
   error = false;
   isUmum = false;
+  private sudahDimuat = false;
 
-  constructor(private api: ApiService, private navCtrl: NavController) {
+  constructor(private api: ApiService, private navCtrl: NavController, private router: Router) {
     addIcons({ book, documentText, helpCircle });
   }
 
+  ngOnInit() {
+    this.masuk();
+  }
+
   ionViewWillEnter() {
+    if (this.sudahDimuat) this.masuk();
+  }
+
+  private masuk() {
+    this.sudahDimuat = true;
     const u = localStorage.getItem("user");
     if (u) this.user = JSON.parse(u);
-    // Akun umum (marketplace) belum punya kelas/mapel — tampilkan sambutan, bukan dashboard siswa
+    // Akun umum (marketplace) tidak punya tab Beranda — arahkan ke Jelajah
     this.isUmum = !!this.user && this.user.role !== "siswa";
     if (this.isUmum) {
       this.loading = false;
+      this.router.navigate(["/tabs/jelajah"], { replaceUrl: true });
       return;
     }
     this.loadBeranda();

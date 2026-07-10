@@ -48,6 +48,8 @@
           </svg>
         </div>
 
+        <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+
         <button class="btn-login" (click)="doLogin()" [disabled]="isLoading">
           <span *ngIf="!isLoading">Masuk</span>
           <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>

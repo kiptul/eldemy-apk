@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { IonicModule, NavController } from "@ionic/angular";
 import { ActivatedRoute } from "@angular/router";
@@ -13,7 +13,7 @@ import { documentTextOutline, videocamOutline, helpCircleOutline, personOutline,
   standalone: true,
   imports: [IonicModule, CommonModule],
 })
-export class CourseDetailPage {
+export class CourseDetailPage implements OnInit {
   private route = inject(ActivatedRoute);
   private apiService = inject(ApiService);
   private navCtrl = inject(NavController);
@@ -25,7 +25,14 @@ export class CourseDetailPage {
     addIcons({ documentTextOutline, videocamOutline, helpCircleOutline, personOutline, timeOutline, chevronBackOutline, clipboardOutline, calendarOutline });
   }
 
-  ionViewWillEnter() {
+  private sudahDimuat = false;
+
+  ngOnInit() { this.masukHalaman(); }
+
+  ionViewWillEnter() { if (this.sudahDimuat) this.masukHalaman(); }
+
+  private masukHalaman() {
+    this.sudahDimuat = true;
     const id = +(this.route.snapshot.paramMap.get("id") || 0);
     if (id) this.load(id);
   }

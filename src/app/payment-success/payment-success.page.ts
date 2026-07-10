@@ -57,6 +57,6 @@ export class PaymentSuccessPage implements OnInit {
   }
 
   goToMyCourses() {
-    this.router.navigate(['/tabs/courses']);
+    this.router.navigate(['/tabs/kursusku']);
   }
 }

@@ -24,6 +24,8 @@ export class RegisterPage {
   repeatPassword = '';
   showPassword = false;
   showRepeatPassword = false;
+  errorMsg = '';
+  isLoading = false;
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -35,24 +37,27 @@ export class RegisterPage {
 
   doRegister() {
     if (!this.username || !this.email || !this.password) {
-      alert('Mohon isi semua data!');
+      this.errorMsg = 'Mohon isi semua data dulu, ya.';
       return;
     }
 
     if (this.password !== this.repeatPassword) {
-      alert('Kata sandi tidak sama!');
+      this.errorMsg = 'Ulangi kata sandi tidak sama.';
       return;
     }
 
     if (this.password.length < 6) {
-      alert('Kata sandi minimal 6 karakter!');
+      this.errorMsg = 'Kata sandi minimal 6 karakter.';
       return;
     }
 
+    this.errorMsg = '';
+    this.isLoading = true;
     this.apiService
       .register(this.username, this.email, this.password)
       .subscribe({
         next: (res: any) => {
+          this.isLoading = false;
           if (res.success) {
             // API sudah mengembalikan token — langsung masuk, tak perlu login ulang
             localStorage.setItem('token', res.token);
@@ -61,16 +66,20 @@ export class RegisterPage {
           }
         },
         error: (err) => {
-          alert(err?.error?.message || 'Gagal mendaftar. Email mungkin sudah digunakan.');
+          this.isLoading = false;
+          const validasi = err?.error?.errors;
+          const pesanValidasi = validasi ? (Object.values(validasi)[0] as string[])?.[0] : null;
+          this.errorMsg = pesanValidasi || err?.error?.message || 'Gagal mendaftar. Email mungkin sudah digunakan.';
         },
       });
   }
 
   async registerWithGoogle() {
     try {
+      this.errorMsg = '';
       const tokens = await this.googleAuthService.signIn();
 
-      if (!tokens.accessToken && !tokens.idToken) { alert('DEBUG: token Google kosong.'); return; }
+      if (!tokens.accessToken && !tokens.idToken) { this.errorMsg = 'Pendaftaran Google dibatalkan.'; return; }
 
       this.apiService.googleLogin(tokens).subscribe({
         next: (res: any) => {
@@ -81,17 +90,12 @@ export class RegisterPage {
           }
         },
         error: (err) => {
-          alert('DEBUG backend: ' + (err?.error?.message || err?.message || JSON.stringify(err)));
+          this.errorMsg = err?.error?.message || 'Pendaftaran Google gagal di server.';
         },
       });
     } catch (error: any) {
-      alert('DEBUG native: ' + [error?.message, error?.code, String(error)].filter(Boolean).join(' | '));
+      this.errorMsg = 'Pendaftaran Google gagal. Coba lagi.';
     }
-  }
-
-  registerWithApple() {
-    // TODO: Implementasi Apple Sign In
-    alert('Fitur daftar dengan Apple akan segera tersedia.');
   }
 
   goToLogin() {

@@ -37,6 +37,8 @@ export class AppComponent {
         const tabPages = [
           '/tabs/home',
           '/tabs/courses',
+          '/tabs/jelajah',
+          '/tabs/kursusku',
           '/tabs/history',
           '/tabs/profile'
         ];

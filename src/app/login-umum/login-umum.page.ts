@@ -34,6 +34,8 @@ import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, schoolOutlin
             <ion-icon class="eye" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" (click)="showPassword = !showPassword"></ion-icon>
           </div>
 
+          <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+
           <button class="btn-masuk" (click)="doLogin()" [disabled]="isLoading">
             {{ isLoading ? 'Memproses...' : 'Masuk' }} <span class="arrow" *ngIf="!isLoading">&#8594;</span>
           </button>
@@ -73,6 +75,11 @@ import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, schoolOutlin
       padding: 28px 28px 20px; display: flex; flex-direction: column;
     }
     .brand-section { text-align: center; margin-bottom: 20px; }
+    .error-banner {
+      background: rgba(229, 57, 53, 0.18); border: 1px solid rgba(229, 57, 53, 0.45);
+      color: #ff8a80; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      border-radius: 12px; padding: 11px 14px; margin-bottom: 12px; text-align: center;
+    }
     .logo-text { font-family: 'Outfit', 'Inter', sans-serif; font-weight: 800; font-size: 2.6rem; color: #fff; margin: 0; letter-spacing: -1.5px; }
     .tagline { font-family: 'Inter', sans-serif; color: #d0d0d0; font-size: 0.92rem; margin-top: 4px; }
     .input-group {
@@ -132,13 +139,15 @@ export class LoginUmumPage {
   password = '';
   showPassword = false;
   isLoading = false;
+  errorMsg = '';
 
   constructor() {
     addIcons({ mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, schoolOutline, logoGoogle, chevronForwardOutline });
   }
 
   doLogin() {
-    if (!this.email || !this.password) { alert('Isi email dan kata sandi!'); return; }
+    if (!this.email || !this.password) { this.errorMsg = 'Isi email dan kata sandi dulu, ya.'; return; }
+    this.errorMsg = '';
     this.isLoading = true;
     this.api.loginEmail(this.email.trim(), this.password).subscribe({
       next: (res: any) => {
@@ -151,16 +160,17 @@ export class LoginUmumPage {
       },
       error: (err) => {
         this.isLoading = false;
-        alert(err?.error?.message || 'Gagal masuk. Periksa email dan kata sandi.');
+        this.errorMsg = err?.error?.message || 'Gagal masuk. Periksa email dan kata sandi.';
       },
     });
   }
 
   async loginGoogle() {
     try {
+      this.errorMsg = '';
       this.isLoading = true;
       const tokens = await this.googleAuth.signIn();
-      if (!tokens.accessToken && !tokens.idToken) { this.isLoading = false; alert('Login Google dibatalkan.'); return; }
+      if (!tokens.accessToken && !tokens.idToken) { this.isLoading = false; this.errorMsg = 'Login Google dibatalkan.'; return; }
       this.api.googleLogin(tokens).subscribe({
         next: (res: any) => {
           this.isLoading = false;
@@ -170,11 +180,11 @@ export class LoginUmumPage {
             this.router.navigate(['/tabs/jelajah'], { replaceUrl: true });
           }
         },
-        error: () => { this.isLoading = false; alert('Login Google gagal di server.'); },
+        error: () => { this.isLoading = false; this.errorMsg = 'Login Google gagal di server.'; },
       });
     } catch (e) {
       this.isLoading = false;
-      alert('Login Google gagal. Coba lagi.');
+      this.errorMsg = 'Login Google gagal. Coba lagi.';
     }
   }
 

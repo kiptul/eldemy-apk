@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { IonicModule, ToastController } from "@ionic/angular";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ApiService } from "../services/api.service";
 import { addIcons } from "ionicons";
 import { keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline } from "ionicons/icons";
@@ -35,6 +35,10 @@ import { keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline } 
           <ion-icon name="mail-outline"></ion-icon>
           <div><label>Email</label><p>{{ user?.email || '-' }}</p></div>
         </div>
+      </div>
+
+      <div class="wajib-ganti" *ngIf="wajibGanti">
+        Demi keamanan, ganti dulu kata sandi bawaanmu (tanggal lahir) sebelum lanjut belajar, ya.
       </div>
 
       <div class="menu">
@@ -71,6 +75,8 @@ import { keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline } 
         p { margin: 2px 0 0; font-size: 15px; font-weight: 600; color: #2b2b3a; }
       }
     }
+    .wajib-ganti { margin: 0 16px 14px; background: #fff3e0; border: 1px solid #ffd699; color: #b06a00;
+      border-radius: 14px; padding: 13px 15px; font-size: 13.5px; font-weight: 600; line-height: 1.5; }
     .menu { margin: 0 16px 30px; display: flex; flex-direction: column; gap: 12px;
       .menu-item { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid #fce4ec; border-radius: 16px; padding: 15px; cursor: pointer;
         .ic { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;
@@ -88,10 +94,12 @@ import { keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline } 
 export class ProfilePage {
   private apiService = inject(ApiService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toastCtrl = inject(ToastController);
 
   user: any = null;
   showGantiPw = false;
+  wajibGanti = false;
   currentPw = "";
   newPw = "";
   isSaving = false;
@@ -100,6 +108,12 @@ export class ProfilePage {
     addIcons({ keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline });
     const u = localStorage.getItem("user");
     if (u) this.user = JSON.parse(u);
+    this.route.queryParams.subscribe((q) => {
+      if (q["wajibGanti"]) {
+        this.wajibGanti = true;
+        this.showGantiPw = true;
+      }
+    });
   }
 
   get inisial() { return (this.user?.name || "P").charAt(0).toUpperCase(); }
@@ -127,7 +141,14 @@ export class ProfilePage {
     if (this.newPw.length < 6) { this.toast("Kata sandi baru minimal 6 karakter.", "danger"); return; }
     this.isSaving = true;
     this.apiService.changePassword(this.currentPw, this.newPw).subscribe({
-      next: () => { this.isSaving = false; this.showGantiPw = false; this.currentPw = ""; this.newPw = ""; this.toast("Kata sandi berhasil diubah!"); },
+      next: () => {
+        this.isSaving = false; this.showGantiPw = false; this.currentPw = ""; this.newPw = "";
+        this.toast("Kata sandi berhasil diubah!");
+        if (this.wajibGanti) {
+          this.wajibGanti = false;
+          this.router.navigate(["/tabs/home"], { replaceUrl: true });
+        }
+      },
       error: (err: any) => { this.isSaving = false; this.toast(err?.error?.message || "Gagal ubah kata sandi.", "danger"); },
     });
   }

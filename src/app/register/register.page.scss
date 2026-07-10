@@ -111,6 +111,18 @@ ion-content.register-content {
   }
 }
 
+.error-banner {
+  background: rgba(229, 57, 53, 0.18);
+  border: 1px solid rgba(229, 57, 53, 0.45);
+  color: #ff8a80;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
 .btn-register {
   width: 100%;
   background: linear-gradient(135deg, #F06292, #c92f6b);
@@ -131,6 +143,10 @@ ion-content.register-content {
   &:active {
     transform: scale(0.98);
     background: linear-gradient(135deg, #d95681, #b02a5f);
+  }
+
+  &:disabled {
+    opacity: 0.65;
   }
 }
 

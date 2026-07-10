@@ -22,6 +22,7 @@ export class LoginPage {
   password = '';
   showPassword = false;
   isLoading = false;
+  errorMsg = '';
 
   constructor() {
     addIcons({ personOutline, lockClosedOutline, schoolOutline, eyeOutline, eyeOffOutline });
@@ -37,10 +38,11 @@ export class LoginPage {
 
   doLogin() {
     if (!this.nis || !this.password) {
-      alert('Mohon isi NIS dan kata sandi!');
+      this.errorMsg = 'Mohon isi NIS dan kata sandi dulu, ya.';
       return;
     }
 
+    this.errorMsg = '';
     this.isLoading = true;
     this.apiService.login(this.nis.trim(), this.password).subscribe({
       next: (res: any) => {
@@ -48,13 +50,17 @@ export class LoginPage {
         if (res.success) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.data));
-          // TODO: kalau must_change_password true, arahkan ke halaman ganti password wajib
-          this.router.navigate(['/tabs/home'], { replaceUrl: true });
+          if (res.must_change_password) {
+            // Masih pakai sandi bawaan (tanggal lahir) — wajib ganti dulu
+            this.router.navigate(['/tabs/profile'], { replaceUrl: true, queryParams: { wajibGanti: 1 } });
+          } else {
+            this.router.navigate(['/tabs/home'], { replaceUrl: true });
+          }
         }
       },
       error: (err) => {
         this.isLoading = false;
-        alert(err?.error?.message || 'Gagal masuk. Periksa NIS dan kata sandi Anda.');
+        this.errorMsg = err?.error?.message || 'Gagal masuk. Periksa NIS dan kata sandi Anda.';
       },
     });
   }
