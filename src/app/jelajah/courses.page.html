@@ -84,6 +84,7 @@
         <div class="card-thumb">
           <img
             [src]="course.thumbnail || 'https://placehold.co/400x300/fce4ec/c92f6b?text=Eldemy'"
+            (error)="$any($event.target).src = 'https://placehold.co/400x300/fce4ec/c92f6b?text=Eldemy'"
             [alt]="course.title"
             loading="lazy" />
           <span class="level-badge">{{ course.skill_level || 'UMUM' }}</span>

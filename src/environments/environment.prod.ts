@@ -1,5 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://sekolah.eltaimayu.my.id/api', // domain sekolah (dideploy nanti)
+  // Deploy menggantikan project lama di domain ini — akun iPaymu terikat ke
+  // domain ini dan APK lama tetap tersambung
+  apiUrl: 'https://eldemy.eltaimayu.my.id/api',
   enablePayment: true
 };
