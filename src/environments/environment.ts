@@ -1,6 +1,6 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://127.0.0.1:8000/api', // backend lokal (php artisan serve)
-  enablePayment: false
+  production: true,
+  apiUrl: 'https://eldemy.eltaimayu.my.id/api',
+  enablePayment: true
 };
 
