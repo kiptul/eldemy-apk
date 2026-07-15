@@ -31,8 +31,6 @@ export class CheckoutPage implements OnInit, OnDestroy {
   // Custom overlay states (replaces broken Ionic overlays)
   isProcessing: boolean = false;
   processingMessage: string = '';
-  showPaymentDialog: boolean = false;
-  paymentUrl: string = '';
   toastMessage: string = '';
   toastType: string = '';
   toastVisible: boolean = false;
@@ -89,10 +87,6 @@ export class CheckoutPage implements OnInit, OnDestroy {
           if (res.success) {
             if (res.payment_url) {
               this.currentOrderId = res.order_id;
-              this.paymentUrl = res.payment_url;
-              this.showPaymentDialog = true;
-              this.cdr.detectChanges();
-              // Auto open payment page
               this.openPaymentPage(res.payment_url);
               this.startPollingPaymentStatus();
             } else {
@@ -113,22 +107,6 @@ export class CheckoutPage implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  onOpenPayment() {
-    this.openPaymentPage(this.paymentUrl);
-  }
-
-  onConfirmPayment() {
-    this.showPaymentDialog = false;
-    this.cdr.detectChanges();
-    this.checkPaymentStatus();
-  }
-
-  onCancelPayment() {
-    this.showPaymentDialog = false;
-    this.stopPolling();
-    this.cdr.detectChanges();
   }
 
   async openPaymentPage(paymentUrl: string) {
@@ -172,7 +150,6 @@ export class CheckoutPage implements OnInit, OnDestroy {
               console.warn('Gagal menutup browser native:', e);
             }
             this.zone.run(() => {
-              this.showPaymentDialog = false;
               this.cdr.detectChanges();
               this.showCustomToast('Pembayaran berhasil! 🎉', 'success');
               this.router.navigate(['/tabs/kursus', this.courseId]);
@@ -183,7 +160,6 @@ export class CheckoutPage implements OnInit, OnDestroy {
               await Browser.close();
             } catch (e) {}
             this.zone.run(() => {
-              this.showPaymentDialog = false;
               this.cdr.detectChanges();
               this.showCustomToast('Pembayaran kedaluwarsa atau gagal.', 'error');
             });

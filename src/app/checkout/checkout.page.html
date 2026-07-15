@@ -81,23 +81,5 @@
   </div>
 </div>
 
-<!-- Custom Payment Dialog (replaces broken AlertController) -->
-<div class="custom-dialog-overlay" *ngIf="showPaymentDialog">
-  <div class="custom-dialog">
-    <div class="dialog-header">
-      <h3>Instruksi Pembayaran</h3>
-      <p class="subtitle">Metode Pembayaran Terpilih</p>
-    </div>
-    <div class="dialog-body">
-      Silakan selesaikan pembayaran Anda pada halaman yang terbuka. Jika halaman pembayaran tidak terbuka otomatis, silakan klik tombol "Buka Pembayaran" di bawah ini.
-    </div>
-    <div class="dialog-actions">
-      <button class="btn-primary" (click)="onOpenPayment()">🔗 Buka Pembayaran</button>
-      <button class="btn-secondary" (click)="onConfirmPayment()">✅ Saya Sudah Membayar</button>
-      <button class="btn-cancel" (click)="onCancelPayment()">Batal</button>
-    </div>
-  </div>
-</div>
-
 <!-- Custom Toast (replaces broken ToastController) -->
 <div class="custom-toast" [ngClass]="toastType" *ngIf="toastVisible">{{ toastMessage }}</div>
