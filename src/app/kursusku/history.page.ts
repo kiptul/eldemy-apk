@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { HeaderComponent } from '../shared/components/header/header.component';
-import { environment } from '../../environments/environment';
-import { Browser } from '@capacitor/browser';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-kursusku',
   standalone: true,
@@ -174,57 +173,34 @@ export class KursuskuPage {
     this.cdr.detectChanges();
 
     const fileName = `Sertifikat_${(this.certificateCourse.title || 'kursus').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_')}.pdf`;
-    const token = localStorage.getItem('token') || '';
-    const apiUrl = environment.apiUrl;
-    const downloadUrl = `${apiUrl}/courses/${this.certificateCourse.id}/certificate/download?token=${token}`;
 
     try {
-      // Open download URL in native browser — triggers Android download manager
-      await Browser.open({ url: downloadUrl });
+      const blob = await firstValueFrom(
+        this.apiService.downloadCertificatePdf(this.certificateCourse.id)
+      );
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
 
-      // Listen for browser close event
-      Browser.addListener('browserFinished', () => {
-        this.zone.run(() => {
-          this.isDownloading = false;
-          this.showLoadingOverlay = false;
-          this.downloadedFileName = fileName;
-          this.showDownloadSuccess = true;
-          this.cdr.detectChanges();
-        });
+      this.zone.run(() => {
+        this.isDownloading = false;
+        this.showLoadingOverlay = false;
+        this.downloadedFileName = fileName;
+        this.showDownloadSuccess = true;
+        this.cdr.detectChanges();
       });
-
-      // Auto-dismiss loading after 3 seconds (browser opened successfully)
-      setTimeout(() => {
-        this.zone.run(() => {
-          if (this.showLoadingOverlay) {
-            this.isDownloading = false;
-            this.showLoadingOverlay = false;
-            this.downloadedFileName = fileName;
-            this.showDownloadSuccess = true;
-            this.cdr.detectChanges();
-          }
-        });
-      }, 3000);
     } catch (error) {
-      console.error('Gagal membuka browser untuk download:', error);
-      // Fallback: open via window.open
-      try {
-        window.open(downloadUrl, '_blank');
-        this.zone.run(() => {
-          this.isDownloading = false;
-          this.showLoadingOverlay = false;
-          this.downloadedFileName = fileName;
-          this.showDownloadSuccess = true;
-          this.cdr.detectChanges();
-        });
-      } catch (e2) {
-        this.zone.run(() => {
-          this.isDownloading = false;
-          this.showLoadingOverlay = false;
-          this.cdr.detectChanges();
-          this.showCustomToast('Gagal mengunduh sertifikat. Coba lagi.', 'error');
-        });
-      }
+      this.zone.run(() => {
+        this.isDownloading = false;
+        this.showLoadingOverlay = false;
+        this.cdr.detectChanges();
+        this.showCustomToast('Gagal mengunduh sertifikat. Coba lagi.', 'error');
+      });
     }
   }
 

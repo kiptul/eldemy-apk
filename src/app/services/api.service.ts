@@ -82,6 +82,10 @@ export class ApiService {
     );
   }
 
+  logout(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/logout`, {}, this.getHeaders());
+  }
+
   updateNickname(nickname: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/user/nickname`, { nickname }, this.getHeaders());
   }

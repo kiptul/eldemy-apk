@@ -46,8 +46,8 @@ export class RegisterPage {
       return;
     }
 
-    if (this.password.length < 6) {
-      this.errorMsg = 'Kata sandi minimal 6 karakter.';
+    if (this.password.length < 8) {
+      this.errorMsg = 'Kata sandi minimal 8 karakter.';
       return;
     }
 

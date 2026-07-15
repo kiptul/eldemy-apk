@@ -49,7 +49,7 @@ import { keyOutline, logOutOutline, schoolOutline, idCardOutline, mailOutline } 
 
         <div class="pw-form" *ngIf="showGantiPw">
           <input type="password" [(ngModel)]="currentPw" placeholder="Kata sandi lama" />
-          <input type="password" [(ngModel)]="newPw" placeholder="Kata sandi baru (min 6 karakter)" />
+          <input type="password" [(ngModel)]="newPw" placeholder="Kata sandi baru (min 8 karakter)" />
           <button (click)="gantiPassword()" [disabled]="isSaving">{{ isSaving ? 'Menyimpan...' : 'Simpan' }}</button>
         </div>
 
@@ -138,7 +138,7 @@ export class ProfilePage {
 
   gantiPassword() {
     if (!this.currentPw || !this.newPw) { this.toast("Isi kata sandi lama & baru.", "danger"); return; }
-    if (this.newPw.length < 6) { this.toast("Kata sandi baru minimal 6 karakter.", "danger"); return; }
+    if (this.newPw.length < 8) { this.toast("Kata sandi baru minimal 8 karakter.", "danger"); return; }
     this.isSaving = true;
     this.apiService.changePassword(this.currentPw, this.newPw).subscribe({
       next: () => {
@@ -154,6 +154,13 @@ export class ProfilePage {
   }
 
   logout() {
+    this.apiService.logout().subscribe({
+      next: () => this.finishLogout(),
+      error: () => this.finishLogout(),
+    });
+  }
+
+  private finishLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     this.router.navigate(["/welcome"], { replaceUrl: true });

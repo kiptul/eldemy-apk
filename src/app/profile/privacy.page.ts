@@ -48,7 +48,7 @@ import {
               <div class="password-field">
                 <input [type]="showNewPassword ? 'text' : 'password'" 
                        [(ngModel)]="newPassword" 
-                       placeholder="Minimal 6 karakter">
+                       placeholder="Minimal 8 karakter">
                 <button class="eye-btn" (click)="showNewPassword = !showNewPassword">
                   <ion-icon [name]="showNewPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
                 </button>
@@ -378,8 +378,8 @@ export class PrivacyPage implements OnInit {
       this.showToast('Semua field harus diisi.', 'warning');
       return;
     }
-    if (this.newPassword.length < 6) {
-      this.showToast('Kata sandi baru minimal 6 karakter.', 'warning');
+    if (this.newPassword.length < 8) {
+      this.showToast('Kata sandi baru minimal 8 karakter.', 'warning');
       return;
     }
     if (this.newPassword !== this.confirmPassword) {
