@@ -1,0 +1,43 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button aria-label="Kembali" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>AI Tutor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ai-tutor-page">
+  <main class="page-body">
+    <section class="hero" aria-labelledby="ai-tutor-heading">
+      <div class="hero-icon"><ion-icon name="sparkles-outline"></ion-icon></div>
+      <p class="eyebrow">PENDAMPING BELAJAR</p>
+      <h1 id="ai-tutor-heading">Belajar lebih terarah bersama AI Tutor</h1>
+      <p>Pilih gaya tutor yang paling nyaman untuk membahas pertanyaan pelajaranmu.</p>
+    </section>
+
+    <section aria-labelledby="pilih-tutor-heading">
+      <h2 id="pilih-tutor-heading">Pilih teman belajarmu</h2>
+      <div class="tutor-list">
+        <button class="tutor-card" type="button" *ngFor="let character of characters" (click)="chooseTutor(character.id)">
+          <span class="avatar" [class.raka]="character.id === 'raka'">
+            <ion-icon [name]="character.icon"></ion-icon>
+          </span>
+          <span class="card-copy">
+            <strong>{{ character.name }}</strong>
+            <small>{{ character.tagline }}</small>
+            <span>{{ character.description }}</span>
+          </span>
+          <ion-icon class="arrow" name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+    </section>
+
+    <aside class="safety-note">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      <p>AI Tutor memberi penjelasan dan petunjuk, bukan jawaban siap salin untuk tugas atau kuis. Jangan kirim NIS, nilai, kata sandi, atau data pribadi.</p>
+    </aside>
+  </main>
+</ion-content>

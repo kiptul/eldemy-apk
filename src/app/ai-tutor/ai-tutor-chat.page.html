@@ -1,0 +1,69 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button aria-label="Kembali memilih tutor" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <span>{{ tutor.name }}</span>
+      <small>{{ tutor.tagline }}</small>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button aria-label="Hapus percakapan" [disabled]="isSending || messages.length === 0" (click)="clearChat()">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ai-chat-page">
+  <main class="chat-body">
+    <section class="intro-card" *ngIf="messages.length === 0">
+      <div class="intro-icon"><ion-icon name="sparkles-outline"></ion-icon></div>
+      <h1>Halo, aku {{ tutor.name }}!</h1>
+      <p>Aku siap membantumu memahami pelajaran. Ceritakan topik yang sedang kamu pelajari atau bagian yang masih membingungkan.</p>
+      <p class="hint">Aku akan memberi penjelasan dan petunjuk, bukan jawaban siap salin untuk tugas atau kuis.</p>
+    </section>
+
+    <section class="message-list" aria-live="polite" *ngIf="messages.length > 0">
+      <article class="message" *ngFor="let chat of messages" [class.user]="chat.role === 'user'" [class.tutor]="chat.role === 'assistant'">
+        <span class="message-label">{{ chat.role === 'user' ? 'Kamu' : tutor.name }}</span>
+        <p>{{ chat.content }}</p>
+      </article>
+
+      <article class="message tutor typing" *ngIf="isSending">
+        <span class="message-label">{{ tutor.name }}</span>
+        <p><span></span><span></span><span></span></p>
+      </article>
+    </section>
+
+    <section class="error-state" *ngIf="errorMessage" role="alert">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <div>
+        <p>{{ errorMessage }}</p>
+        <button type="button" (click)="retryLastMessage()" [disabled]="isSending || !lastAttempt">
+          <ion-icon name="refresh-outline"></ion-icon>
+          Coba lagi
+        </button>
+      </div>
+    </section>
+  </main>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="quota-note" *ngIf="remainingMessages !== null">Sisa pesan hari ini: {{ remainingMessages }}</div>
+  <form class="composer" (ngSubmit)="sendMessage()">
+    <textarea
+      name="message"
+      [(ngModel)]="inputMessage"
+      [disabled]="isSending"
+      maxlength="1000"
+      rows="1"
+      placeholder="Tulis pertanyaan pelajaranmu..."></textarea>
+    <button type="submit" aria-label="Kirim pesan" [disabled]="isSending || !inputMessage.trim()">
+      <ion-icon name="send"></ion-icon>
+    </button>
+  </form>
+  <p class="privacy-note"><ion-icon name="chatbubble-ellipses-outline"></ion-icon> Chat hanya tersimpan selama halaman ini terbuka. Jangan kirim data pribadi.</p>
+</ion-footer>

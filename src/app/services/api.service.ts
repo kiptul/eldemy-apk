@@ -4,6 +4,21 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
+export type AiTutorCharacterId = 'nara' | 'raka';
+
+export interface AiTutorMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface AiTutorResponse {
+  success: boolean;
+  data: {
+    reply: string;
+    remaining_messages: number;
+  };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -224,5 +239,21 @@ export class ApiService {
 
   markAllNotificationsAsRead(): Observable<any> {
     return this.http.put(`${this.apiUrl}/notifications/read-all`, {}, this.getHeaders());
+  }
+
+  sendAiTutorMessage(
+    characterId: AiTutorCharacterId,
+    message: string,
+    history: AiTutorMessage[],
+  ): Observable<AiTutorResponse> {
+    return this.http.post<AiTutorResponse>(
+      `${this.apiUrl}/ai-tutor/chat`,
+      {
+        character_id: characterId,
+        message,
+        history,
+      },
+      this.getHeaders(),
+    );
   }
 }

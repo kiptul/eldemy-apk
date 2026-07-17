@@ -22,6 +22,8 @@ export const routes: Routes = [
       { path: "tugas-detail/:id", loadComponent: () => import("./tugas-detail/tugas-detail.page").then((m) => m.TugasDetailPage) },
       { path: "kuis/:id", loadComponent: () => import("./kuis/kuis.page").then((m) => m.KuisPage) },
       { path: "jelajah", loadComponent: () => import("./jelajah/courses.page").then((m) => m.JelajahPage) },
+      { path: "ai-tutor/chat/:characterId", loadComponent: () => import("./ai-tutor/ai-tutor-chat.page").then((m) => m.AiTutorChatPage) },
+      { path: "ai-tutor", loadComponent: () => import("./ai-tutor/ai-tutor.page").then((m) => m.AiTutorPage) },
       { path: "kursusku", loadComponent: () => import("./kursusku/history.page").then((m) => m.KursuskuPage) },
       { path: "kursus/:id", loadComponent: () => import("./kursus-detail/course-detail.page").then((m) => m.KursusDetailPage) },
       { path: "kursus/:courseId/materi/:materialId", loadComponent: () => import("./kursus-materi/material-detail.page").then((m) => m.KursusMateriPage) },

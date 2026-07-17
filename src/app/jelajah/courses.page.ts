@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
   bookOutline, searchOutline, peopleOutline, pricetagOutline,
-  compassOutline, alertCircleOutline, closeCircle
+  compassOutline, alertCircleOutline, closeCircle,
+  sparklesOutline, arrowForwardOutline
 } from 'ionicons/icons';
 import { HeaderComponent } from '../shared/components/header/header.component';
 
@@ -36,7 +37,8 @@ export class JelajahPage implements OnInit {
   constructor() {
     addIcons({
       bookOutline, searchOutline, peopleOutline, pricetagOutline,
-      compassOutline, alertCircleOutline, closeCircle
+      compassOutline, alertCircleOutline, closeCircle,
+      sparklesOutline, arrowForwardOutline
     });
   }
 
@@ -90,6 +92,10 @@ export class JelajahPage implements OnInit {
 
   clearSearch() {
     this.searchQuery = '';
+  }
+
+  openAiTutor() {
+    this.router.navigate(['/tabs/ai-tutor']);
   }
 
   get filteredCourses(): any[] {
