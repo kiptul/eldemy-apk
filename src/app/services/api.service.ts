@@ -172,6 +172,18 @@ export class ApiService {
     );
   }
 
+  checkQuizAnswer(
+    quizId: number,
+    questionIndex: number,
+    answer: string,
+  ): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/quizzes/${quizId}/check`,
+      { question_index: questionIndex, answer },
+      this.getHeaders(),
+    );
+  }
+
   getCertificate(courseId: number): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/courses/${courseId}/certificate`,

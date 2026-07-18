@@ -6,6 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { HeaderComponent } from '../shared/components/header/header.component';
 import { firstValueFrom } from 'rxjs';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 @Component({
   selector: 'app-kursusku',
   standalone: true,
@@ -178,22 +181,51 @@ export class KursuskuPage {
       const blob = await firstValueFrom(
         this.apiService.downloadCertificatePdf(this.certificateCourse.id)
       );
-      const objectUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(objectUrl);
 
-      this.zone.run(() => {
-        this.isDownloading = false;
-        this.showLoadingOverlay = false;
-        this.downloadedFileName = fileName;
-        this.showDownloadSuccess = true;
-        this.cdr.detectChanges();
-      });
+      if (Capacitor.isNativePlatform()) {
+        // APK: <a download> tidak berfungsi di WebView Android. Tulis file ke
+        // penyimpanan lalu buka share sheet agar user bisa simpan/buka PDF-nya.
+        const base64 = await this.blobToBase64(blob);
+        const written = await Filesystem.writeFile({
+          path: fileName,
+          data: base64,
+          directory: Directory.Cache,
+        });
+
+        this.zone.run(() => {
+          this.isDownloading = false;
+          this.showLoadingOverlay = false;
+          this.cdr.detectChanges();
+        });
+
+        try {
+          await Share.share({
+            title: fileName,
+            files: [written.uri],
+            dialogTitle: 'Simpan atau bagikan sertifikat',
+          });
+        } catch {
+          // user menutup share sheet — bukan error
+        }
+      } else {
+        // Web: unduh via anchor blob (berfungsi di browser).
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(objectUrl);
+
+        this.zone.run(() => {
+          this.isDownloading = false;
+          this.showLoadingOverlay = false;
+          this.downloadedFileName = fileName;
+          this.showDownloadSuccess = true;
+          this.cdr.detectChanges();
+        });
+      }
     } catch (error) {
       this.zone.run(() => {
         this.isDownloading = false;
@@ -202,6 +234,20 @@ export class KursuskuPage {
         this.showCustomToast('Gagal mengunduh sertifikat. Coba lagi.', 'error');
       });
     }
+  }
+
+  /** Ubah Blob jadi string base64 (tanpa prefix data:) untuk Filesystem.writeFile. */
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(reader.error);
+      reader.onload = () => {
+        const result = reader.result as string;
+        const comma = result.indexOf(',');
+        resolve(comma >= 0 ? result.substring(comma + 1) : result);
+      };
+      reader.readAsDataURL(blob);
+    });
   }
 
   closeDownloadSuccess() {

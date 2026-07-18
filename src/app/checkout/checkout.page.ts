@@ -26,6 +26,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
   course: any = null;
   isLoading: boolean = true;
   currentOrderId: string = '';
+  paymentUrl: string = '';
   pollingInterval: any = null;
 
   // Custom overlay states (replaces broken Ionic overlays)
@@ -87,6 +88,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
           if (res.success) {
             if (res.payment_url) {
               this.currentOrderId = res.order_id;
+              this.paymentUrl = res.payment_url;
               this.openPaymentPage(res.payment_url);
               this.startPollingPaymentStatus();
             } else {
@@ -194,11 +196,13 @@ export class CheckoutPage implements OnInit, OnDestroy {
           this.isProcessing = false;
           this.cdr.detectChanges();
           if (res.success && res.status === 'settlement') {
+            this.stopPolling();
             this.showCustomToast('Pembayaran berhasil! 🎉', 'success');
             this.router.navigate(['/tabs/kursus', this.courseId]);
           } else if (res.status === 'pending') {
-            this.showCustomToast('Pembayaran Anda sedang diproses...', 'info');
-            this.router.navigate(['/tabs/kursus', this.courseId]);
+            // Tetap di halaman ini — pembayaran belum terkonfirmasi, jangan beri
+            // akses. Polling & tombol "Cek Status" biar user coba lagi sebentar.
+            this.showCustomToast('Pembayaran Anda sedang diproses. Coba cek lagi beberapa saat.', 'info');
           } else {
             this.showCustomToast('Pembayaran belum selesai. Silakan coba lagi.', 'warning');
           }
@@ -212,6 +216,13 @@ export class CheckoutPage implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  /** Buka lagi halaman pembayaran (mis. tab iPaymu tertutup sebelum selesai). */
+  reopenPayment() {
+    if (!this.paymentUrl) return;
+    this.openPaymentPage(this.paymentUrl);
+    this.startPollingPaymentStatus();
   }
 
   showCustomToast(msg: string, type: string = 'info') {

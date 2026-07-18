@@ -238,6 +238,45 @@ $dark-card: #13141f;
         transform: scale(0.96);
       }
     }
+
+    .pay-hint {
+      margin: 0 0 12px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #6b6b6b;
+
+      strong {
+        color: #c92f6b;
+        font-weight: 600;
+      }
+    }
+
+    .reopen-btn {
+      margin-top: 10px;
+      background: transparent;
+      color: #c92f6b;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1.5px solid rgba(201, 47, 107, 0.35);
+      border-radius: 30px;
+      padding: 14px 24px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+
+      &:active {
+        transform: scale(0.96);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+    }
   }
 }
 

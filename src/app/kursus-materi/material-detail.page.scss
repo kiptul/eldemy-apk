@@ -491,12 +491,20 @@ ion-footer.sticky-footer {
       ion-icon { font-size:1.3rem; }
       .fb-correct { color:#4caf50; }
       .fb-wrong { color:#ef5350; }
+      .fb-reveal { color:#66bb6a;font-size:1.1rem; }
     }
     &.selected { background:#fff0f4;border-color:var(--pink); .option-letter { background:var(--pink);color:#fff; } }
     &.correct {
       background:#e8f5e9;border-color:#4caf50;
       .option-letter { background:#4caf50;color:#fff; }
       .option-text { color:#2e7d32;font-weight:700; }
+    }
+    // Kunci jawaban saat user SALAH: ditunjukkan tapi tidak dinyatakan benar
+    // (outline putus-putus, tanpa isi hijau solid & tanpa centang perayaan).
+    &.revealed {
+      background:#f3faf4;border-color:#81c784;border-style:dashed;
+      .option-letter { background:transparent;border:2px solid #81c784;color:#43a047; }
+      .option-text { color:#388e3c;font-weight:600; }
     }
     &.wrong {
       background:#ffebee;border-color:#ef5350;
@@ -574,6 +582,15 @@ ion-footer.sticky-footer {
 
 .result-actions {
   display:flex;flex-direction:column;gap:12px;margin-top:10px;
+  .finish-btn {
+    display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;width:100%;
+    background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;border:none;border-radius:24px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;
+    box-shadow:0 8px 25px rgba(67,160,71,0.3);transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    ion-icon { font-size:1.2rem; }
+    &:active { transform:scale(0.96); box-shadow:0 4px 15px rgba(67,160,71,0.2); }
+    &:disabled { opacity:0.6;cursor:default; }
+  }
   .retry-btn {
     display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;width:100%;
     background:linear-gradient(135deg,var(--pink),#d91e60);color:#fff;border:none;border-radius:24px;
@@ -581,6 +598,11 @@ ion-footer.sticky-footer {
     box-shadow:0 8px 25px rgba(201,47,107,0.3);transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     ion-icon { font-size:1.2rem; }
     &:active { transform:scale(0.96); box-shadow:0 4px 15px rgba(201,47,107,0.2); }
+    // Saat sudah lulus, Coba Lagi turun jadi tombol sekunder (outline pink)
+    &.secondary {
+      background:transparent;color:var(--pink);border:1.5px solid rgba(201,47,107,0.35);
+      box-shadow:none;
+    }
   }
   .close-result-btn {
     padding:16px;width:100%;background:rgba(255,255,255,0.8);color:var(--dark);
@@ -588,5 +610,83 @@ ion-footer.sticky-footer {
     font-weight:600;font-size:0.9rem;cursor:pointer;transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow:0 4px 12px rgba(0,0,0,0.02); backdrop-filter:blur(10px);
     &:active { transform:scale(0.96); background:rgba(0,0,0,0.02); }
+  }
+}
+
+/* Kartu PDF bisa diklik untuk melihat */
+.pdf-card.clickable {
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  &:active { transform: scale(0.985); }
+}
+
+/* In-app PDF Viewer (fullscreen, view-only) */
+.pdf-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  background: #1c1c1e;
+
+  .pdf-viewer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+    background: #c92f6b;
+    color: #fff;
+    flex-shrink: 0;
+
+    .pdf-viewer-titlewrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+
+      ion-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+      .pdf-viewer-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .pdf-viewer-close {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+
+      ion-icon { font-size: 1.5rem; }
+      &:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.3); }
+    }
+  }
+
+  .pdf-viewer-body {
+    flex: 1;
+    min-height: 0;
+    background: #525659;
+
+    .pdf-viewer-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
   }
 }

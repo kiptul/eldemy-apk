@@ -12,7 +12,8 @@ import {
   downloadOutline, helpCircleOutline, arrowForwardOutline,
   ribbonOutline, bookOutline, closeOutline, arrowBackOutline,
   trophyOutline, refreshOutline, timerOutline, reloadOutline,
-  closeCircle, shieldCheckmarkOutline, starOutline
+  closeCircle, shieldCheckmarkOutline, starOutline,
+  eyeOutline, expandOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -30,7 +31,7 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
   private el = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
   private zone = inject(NgZone);
-
+  
   courseId: number = 0;
   materialId: number = 0;
   material: any = null;
@@ -54,6 +55,11 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
   quizInfo: any = null;
   quizLoading: boolean = false;
 
+  // In-app PDF viewer (fullscreen, view-only)
+  isPdfViewerOpen: boolean = false;
+  pdfViewerUrl: SafeResourceUrl | null = null;
+  pdfViewerTitle: string = '';
+
   // Quiz Active State (fullscreen modal)
   isQuizActive: boolean = false;
   quizQuestions: any[] = [];
@@ -64,6 +70,7 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
   currentQuestionIndex: number = 0;
   selectedAnswers: { [key: number]: number } = {}; // Now stores option INDEX (0-3)
   answerStatus: { [key: number]: 'correct' | 'wrong' | null } = {};
+  correctAnswerIndex: { [key: number]: number } = {}; // index opsi benar, diisi dari backend saat menjawab
   isSubmittingQuiz: boolean = false;
   isAutoAdvancing: boolean = false;
 
@@ -96,7 +103,8 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
       downloadOutline, helpCircleOutline, arrowForwardOutline,
       ribbonOutline, bookOutline, closeOutline, arrowBackOutline,
       trophyOutline, refreshOutline, timerOutline, reloadOutline,
-      closeCircle, shieldCheckmarkOutline, starOutline
+      closeCircle, shieldCheckmarkOutline, starOutline,
+      eyeOutline, expandOutline
     });
   }
 
@@ -206,19 +214,20 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
     return this.parsedContent?.description || '';
   }
 
-  /** Open specific PDF */
-  downloadSpecificPdf(path: string) {
+  /** Tampilkan PDF di dalam app secara fullscreen, view-only (tanpa unduh). */
+  openPdfInApp(path: string, title?: string) {
     if (!path) return;
     const baseUrl = environment.apiUrl.replace('/api', '');
-    const url = `${baseUrl}/storage/${path}`;
-    window.open(url, '_blank');
+    // #toolbar=0&navpanes=0 menyembunyikan bar unduh/print viewer bawaan browser.
+    const url = `${baseUrl}/storage/${path}#toolbar=0&navpanes=0&view=FitH`;
+    this.pdfViewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.pdfViewerTitle = title || 'Materi PDF';
+    this.isPdfViewerOpen = true;
   }
 
-  /** Backward compatibility */
-  downloadPdf() {
-    if (this.modules.length > 0) {
-      this.downloadSpecificPdf(this.modules[0].path);
-    }
+  closePdfViewer() {
+    this.isPdfViewerOpen = false;
+    this.pdfViewerUrl = null;
   }
 
   loadQuizInfo() {
@@ -280,6 +289,7 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
     this.currentQuestionIndex = 0;
     this.selectedAnswers = {};
     this.answerStatus = {};
+    this.correctAnswerIndex = {};
     this.showQuizResult = false;
     this.isQuizActive = true;
     this.isAutoAdvancing = false;
@@ -328,24 +338,36 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectAnswer(questionIndex: number, optionIndex: number) {
-    if (this.answerStatus[questionIndex]) return; 
+    if (this.answerStatus[questionIndex]) return;
     if (this.isAutoAdvancing) return;
 
     this.selectedAnswers[questionIndex] = optionIndex;
-    const currentQ = this.quizQuestions[questionIndex];
+    this.isAutoAdvancing = true; // kunci input selama validasi berlangsung
 
-    const correctValue = currentQ.correct_answer;
+    // Kunci jawaban tidak pernah ada di client; minta backend memvalidasi
+    // satu jawaban ini agar feedback benar/salah akurat & tetap anti-nyontek.
     const selectedLetter = this.LETTER_MAP[optionIndex];
-    const selectedText = currentQ.options[optionIndex];
+    this.apiService.checkQuizAnswer(this.quizId, questionIndex, selectedLetter).subscribe({
+      next: (res: any) => {
+        if (res && res.success) {
+          this.answerStatus[questionIndex] = res.is_correct ? 'correct' : 'wrong';
+          if (res.correct_index !== null && res.correct_index !== undefined) {
+            this.correctAnswerIndex[questionIndex] = res.correct_index;
+          }
+        }
+        this.scheduleAdvance(questionIndex);
+      },
+      error: () => {
+        // Endpoint tak tersedia (mis. backend belum ter-deploy): jangan
+        // memvonis salah keliru — lanjut tanpa warna, skor tetap dihitung saat submit.
+        this.answerStatus[questionIndex] = null;
+        this.scheduleAdvance(questionIndex);
+      },
+    });
+  }
 
-    if (selectedLetter === correctValue || selectedText === correctValue) {
-      this.answerStatus[questionIndex] = 'correct';
-    } else {
-      this.answerStatus[questionIndex] = 'wrong';
-    }
-
-    // Auto advance after short delay
-    this.isAutoAdvancing = true;
+  /** Beri jeda agar feedback terbaca, lalu maju ke soal berikutnya / submit. */
+  private scheduleAdvance(questionIndex: number) {
     setTimeout(() => {
       this.isAutoAdvancing = false;
       if (questionIndex < this.quizQuestions.length - 1) {
@@ -353,32 +375,26 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.submitQuiz();
       }
-    }, 1800);
+    }, 1500);
   }
 
   isSelected(questionIndex: number, optionIndex: number): boolean {
     return this.selectedAnswers[questionIndex] === optionIndex;
   }
 
-  /** Check if this option is the correct answer */
+  /** Check if this option is the correct answer (index dari backend) */
   isCorrectOption(questionIndex: number, optionIndex: number): boolean {
     if (this.answerStatus[questionIndex] === undefined || this.answerStatus[questionIndex] === null) return false;
-    const q = this.quizQuestions[questionIndex];
-    const correctValue = q.correct_answer;
-    const currentLetter = this.LETTER_MAP[optionIndex];
-    const currentText = q.options[optionIndex];
-    return currentLetter === correctValue || currentText === correctValue;
+    return this.correctAnswerIndex[questionIndex] === optionIndex;
   }
 
   getCorrectAnswerText(questionIndex: number): string {
     const q = this.quizQuestions[questionIndex];
-    if (!q) return '';
-    const correctValue = q.correct_answer;
-    if (this.LETTER_MAP.includes(correctValue)) {
-      const idx = this.LETTER_MAP.indexOf(correctValue);
-      return q.options[idx] || correctValue;
+    const idx = this.correctAnswerIndex[questionIndex];
+    if (q && idx !== undefined && q.options[idx] !== undefined) {
+      return q.options[idx];
     }
-    return correctValue;
+    return '';
   }
 
   /** Check if this specific option was selected and is wrong */
@@ -451,6 +467,7 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
     this.currentQuestionIndex = 0;
     this.selectedAnswers = {};
     this.answerStatus = {};
+    this.correctAnswerIndex = {};
     this.isAutoAdvancing = false;
     if (this.quizDuration > 0) {
       this.timerSeconds = this.quizDuration * 60;
@@ -461,12 +478,25 @@ export class KursusMateriPage implements OnInit, AfterViewInit, OnDestroy {
     this.startTimer();
   }
 
+  /** Dari layar hasil kuis (lulus): tutup kuis lalu tandai materi selesai. */
+  finishFromQuiz() {
+    this.closeQuiz();
+    this.markComplete();
+  }
+
   async markComplete() {
-    if (this.quizInfo && this.quizInfo.min_score > 0) {
-      const bestScore = this.quizInfo.best_score || 0;
-      if (bestScore < this.quizInfo.min_score) {
+    // Paksa jadi angka: API bisa kirim string ("100"/"70"), dan "100" < "70"
+    // dibandingkan sebagai string (per-huruf) → salah blokir. Pakai juga skor
+    // hasil submit terakhir sesi ini kalau quizInfo belum ter-refresh.
+    const minScore = Number(this.quizInfo?.min_score) || 0;
+    if (this.quizInfo && minScore > 0) {
+      const bestScore = Math.max(
+        Number(this.quizInfo.best_score) || 0,
+        Number(this.quizResultBestScore) || 0
+      );
+      if (bestScore < minScore) {
         // Use custom toast instead of broken AlertController
-        this.showCustomToast(`Nilai kuis Anda (${bestScore}%) belum memenuhi batas minimum (${this.quizInfo.min_score}%). Kerjakan kuis terlebih dahulu.`, 'warning');
+        this.showCustomToast(`Nilai kuis Anda (${bestScore}%) belum memenuhi batas minimum (${minScore}%). Kerjakan kuis terlebih dahulu.`, 'warning');
         return;
       }
     }

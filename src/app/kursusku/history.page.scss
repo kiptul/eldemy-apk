@@ -413,12 +413,16 @@ $teal: #00897b;
 
     .cert-name {
       font-family: 'Times New Roman', Times, serif;
-      font-size: 1.45rem;
+      font-size: clamp(1.5rem, 5.5vw, 2rem);
       font-weight: 700;
       font-style: italic;
       color: #bd9136;
       margin: 0;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
+      line-height: 1.05;
+      white-space: nowrap;      // jaga tetap 1 baris agar tidak menabrak teks template
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

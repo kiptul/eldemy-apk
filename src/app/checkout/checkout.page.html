@@ -63,13 +63,26 @@
 <!-- Bottom Sticky Footer -->
 <ion-footer class="checkout-sticky-footer ion-no-border" *ngIf="!isLoading && course" mode="md">
   <div class="footer-wrap">
-    <button class="buy-btn pulse-glow full-width" (click)="payNow()" [disabled]="isProcessing">
+    <!-- Sebelum pembayaran dimulai -->
+    <button *ngIf="!currentOrderId" class="buy-btn pulse-glow full-width" (click)="payNow()" [disabled]="isProcessing">
       <span *ngIf="!isProcessing">
         Pilih Metode Pembayaran
         <ion-icon name="arrow-forward-outline"></ion-icon>
       </span>
       <span *ngIf="isProcessing">⏳ Memproses...</span>
     </button>
+
+    <!-- Setelah pembayaran dimulai: cek status manual + buka ulang -->
+    <ng-container *ngIf="currentOrderId">
+      <p class="pay-hint">Selesaikan pembayaran di tab yang terbuka, lalu klik <strong>Cek Status Pembayaran</strong>.</p>
+      <button class="buy-btn full-width" (click)="checkPaymentStatus()" [disabled]="isProcessing">
+        <span *ngIf="!isProcessing">Cek Status Pembayaran</span>
+        <span *ngIf="isProcessing">⏳ Memeriksa...</span>
+      </button>
+      <button class="reopen-btn full-width" (click)="reopenPayment()" [disabled]="isProcessing">
+        Buka Halaman Pembayaran Lagi
+      </button>
+    </ng-container>
   </div>
 </ion-footer>
 
